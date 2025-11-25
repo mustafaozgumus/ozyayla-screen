@@ -4,9 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Özyayla İlk-Ortaokulu Bilgi Ekranı</title>
-    <!-- Tailwind CSS (CDN sürümü kullanmaya devam ediyoruz, kolay taşınabilirlik için) -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script>
       tailwind.config = {
         theme: {
@@ -28,11 +28,16 @@
             animation: {
               'float-slow': 'float 20s ease-in-out infinite',
               'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              'gradient-mesh': 'gradient-mesh 20s ease infinite',
             },
             keyframes: {
               float: {
                 '0%, 100%': { transform: 'translate(0, 0)' },
                 '50%': { transform: 'translate(-20px, 10px)' },
+              },
+              'gradient-mesh': {
+                '0%, 100%': { 'background-position': '0% 50%' },
+                '50%': { 'background-position': '100% 50%' },
               }
             }
           },
@@ -56,23 +61,34 @@
         border-radius: 10px;
       }
       .glass-panel {
-        background: rgba(15, 23, 42, 0.7);
-        backdrop-filter: blur(16px) saturate(180%);
-        -webkit-backdrop-filter: blur(16px) saturate(180%);
-        border: 1px solid rgba(148, 163, 184, 0.15);
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(20px) saturate(140%);
+        -webkit-backdrop-filter: blur(20px) saturate(140%);
+        border: 1px solid rgba(255, 255, 255, 0.08);
         box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      }
+      .mesh-bg {
+        background: radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+                    radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
+                    radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%), 
+                    radial-gradient(at 0% 50%, hsla(348,94%,36%,0.2) 0, transparent 50%), 
+                    radial-gradient(at 100% 50%, hsla(342,91%,6%,1) 0, transparent 50%), 
+                    radial-gradient(at 0% 100%, hsla(217,100%,13%,1) 0, transparent 50%), 
+                    radial-gradient(at 100% 100%, hsla(225,50%,15%,1) 0, transparent 50%);
+        background-size: 200% 200%;
+        animation: gradient-mesh 25s ease infinite alternate;
       }
     </style>
   <script type="importmap">
 {
   "imports": {
+    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1",
     "react": "https://aistudiocdn.com/react@^19.2.0",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
     "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "papaparse": "https://aistudiocdn.com/papaparse@^5.5.3",
     "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
     "vite": "https://aistudiocdn.com/vite@^7.2.4",
-    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1"
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "papaparse": "https://aistudiocdn.com/papaparse@^5.5.3"
   }
 }
 </script>

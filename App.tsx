@@ -8,20 +8,20 @@ import Schedule from './components/Schedule';
 
 const App: React.FC = () => {
   return (
-    <div className="relative w-screen h-screen bg-slate-950 overflow-hidden flex flex-col font-sans">
-      {/* Dynamic Background */}
-      <div className="fixed inset-0 z-0">
-        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-brand-red/20 blur-[120px] animate-float-slow"></div>
-        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-blue-600/20 blur-[120px] animate-float-slow" style={{animationDelay: '-5s'}}></div>
-        <div className="absolute top-[40%] left-[40%] w-[30%] h-[30%] rounded-full bg-purple-600/10 blur-[100px] animate-pulse-slow"></div>
-        {/* Noise Texture */}
-        <div className="absolute inset-0 opacity-20" style={{backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`}}></div>
+    <div className="relative w-screen h-screen overflow-hidden flex flex-col font-sans text-slate-100">
+      
+      {/* Modern Mesh Gradient Background */}
+      <div className="fixed inset-0 z-0 mesh-bg"></div>
+      
+      {/* Noise Overlay for Texture */}
+      <div className="fixed inset-0 z-0 opacity-[0.03] pointer-events-none mix-blend-overlay" 
+           style={{backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`}}>
       </div>
 
       <Header />
 
       {/* Main Grid Content */}
-      <main className="relative z-10 flex-1 p-6">
+      <main className="relative z-10 flex-1 p-6 pt-2">
         <div className="w-full h-full max-w-[1800px] mx-auto grid grid-cols-12 grid-rows-[auto_1fr] gap-6">
           
           {/* Left Column (Weather & Clock) */}
