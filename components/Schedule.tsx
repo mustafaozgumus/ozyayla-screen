@@ -13,7 +13,8 @@ const Schedule: React.FC = () => {
         const today = new Date().toLocaleDateString('tr-TR', { weekday: 'long' });
         setDayName(today);
         
-        const normalize = (s: string) => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        // Proper Turkish normalization
+        const normalize = (s: string) => s.toLocaleLowerCase('tr-TR').normalize("NFD").replace(/[\u0300-\u036f]/g, "");
         const key = normalize(today);
 
         const filtered = rows.filter(r => normalize(r.GÜN || '') === key);

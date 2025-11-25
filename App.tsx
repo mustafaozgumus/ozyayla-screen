@@ -22,10 +22,11 @@ const App: React.FC = () => {
 
       {/* Main Grid Content */}
       <main className="relative z-10 flex-1 p-6 pt-2">
-        <div className="w-full h-full max-w-[1800px] mx-auto grid grid-cols-12 grid-rows-[auto_1fr] gap-6">
+        {/* Adjusted to max-w-[1120px] and grid-cols-10 for 220px-680px-220px ratio */}
+        <div className="w-full h-full max-w-[1120px] mx-auto grid grid-cols-10 grid-rows-[auto_1fr] gap-6">
           
-          {/* Left Column (Weather & Clock) */}
-          <div className="col-span-3 flex flex-col gap-6">
+          {/* Left Column (Weather & Clock) - 2 units */}
+          <div className="col-span-2 flex flex-col gap-6">
             <div className="h-48">
               <WeatherCard />
             </div>
@@ -37,7 +38,7 @@ const App: React.FC = () => {
             </div>
           </div>
 
-          {/* Middle Column (News & Schedule) */}
+          {/* Middle Column (News & Schedule) - 6 units */}
           <div className="col-span-6 flex flex-col gap-6">
             <div className="w-full">
               <NewsSlider />
@@ -47,8 +48,8 @@ const App: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Column (Duties & Events) */}
-          <div className="col-span-3 flex flex-col gap-6">
+          {/* Right Column (Duties & Events) - 2 units */}
+          <div className="col-span-2 flex flex-col gap-6">
              <div className="flex-1">
               <DutyTeachers />
              </div>

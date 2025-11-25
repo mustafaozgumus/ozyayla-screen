@@ -1,7 +1,7 @@
 import Papa from 'papaparse';
 import { BirthdayRow, DutyRow, EventRow, LessonRow, NewsItem, WeatherData } from '../types';
 
-// Constants from the original code
+// Constants
 const URLs = {
   SCHEDULE: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTClYVMj0KftN0xG1N16kd6kIBfH00J2KPNSFX525oBhjB0_koUX43Gy9lSKTy_u62H6D2MLRwD5_w8/pub?output=csv",
   DUTY: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTAmcyAXX1e6VgI1_1248w5lFiyLuwzuDJt0KAUBtWKSsRqH4Tb1ozXhyOB45vuAsWWWQ5voh_hMVNC/pub?output=csv",
@@ -12,20 +12,29 @@ const URLs = {
   NEWS_PROXY: "https://dronecekiminevsehir.com/proxy.php"
 };
 
-export const fetchCsv = <T>(url: string): Promise<T[]> => {
-  return new Promise((resolve, reject) => {
-    Papa.parse(url, {
-      download: true,
-      header: true,
-      skipEmptyLines: true,
-      complete: (results) => {
-        resolve(results.data as T[]);
-      },
-      error: (error) => {
-        reject(error);
-      }
+// Robust CSV Fetcher
+export const fetchCsv = async <T>(url: string): Promise<T[]> => {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    const text = await response.text();
+    
+    return new Promise((resolve, reject) => {
+      Papa.parse(text, {
+        header: true,
+        skipEmptyLines: true,
+        complete: (results) => {
+          resolve(results.data as T[]);
+        },
+        error: (error: any) => {
+          reject(error);
+        }
+      });
     });
-  });
+  } catch (error) {
+    console.error("CSV Fetch Error:", error);
+    return [];
+  }
 };
 
 export const getSchedule = () => fetchCsv<LessonRow>(URLs.SCHEDULE);

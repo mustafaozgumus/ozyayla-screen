@@ -4,7 +4,7 @@ import { School, Wifi } from 'lucide-react';
 const Header: React.FC = () => {
   return (
     <div className="relative z-20 w-full px-6 pt-6 pb-2">
-      <header className="max-w-[1800px] mx-auto bg-slate-900/40 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl px-6 py-4 flex items-center justify-between">
+      <header className="max-w-[1120px] mx-auto bg-slate-900/40 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl px-6 py-4 flex items-center justify-between">
         
         {/* Left: Brand Identity */}
         <div className="flex items-center gap-5">
@@ -30,8 +30,6 @@ const Header: React.FC = () => {
             </div>
           </div>
         </div>
-
-        {/* Center: Decorative or Motto (Optional, keeping it clean for now) */}
         
         {/* Right: Status Indicators */}
         <div className="flex items-center gap-4">
