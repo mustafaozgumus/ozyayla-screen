@@ -3,24 +3,27 @@
 
 export const USER_CONFIG = {
   // Sağ üstte görünen Eğitim Öğretim Yılı yazısı
-  ACADEMIC_YEAR: "2025 - 2026",
+  ACADEMIC_YEAR: "2024 - 2025",
 
-  // MANUEL DUYURULAR
-  // Buraya yazdığınız maddeler, otomatik çekilen haberlerin ÜSTÜNDE görünür.
-  // "important: true" yaparsanız kırmızı yanar (Acil duyurular için).
-  // Duyuru eklemek istemiyorsanız köşeli parantezlerin içini boş bırakın: []
+  // DUYURULAR LİSTESİ
+  // Buraya yazdığınız maddeler sağ taraftaki Duyuru Panosu'nda görünür.
+  // "important: true" yaparsanız yazının yanında kırmızı uyarı ikonu çıkar.
+  // Eklemek için süslü parantezlerin arasına virgül koyarak yenisini ekleyebilirsiniz.
   MANUAL_ANNOUNCEMENTS: [
     {
       id: 1,
-      title: "deneme",
+      title: "29 Ekim Cumhuriyet Bayramı hazırlıkları başlamıştır.",
       important: true 
     },
     {
       id: 2,
-      title: "Okul Aile Birliği Toplantısı bu Cuma saat 15:30'da konferans salonunda yapılacaktır.",
+      title: "Okul Aile Birliği Toplantısı bu Cuma saat 15:30'da yapılacaktır.",
       important: false
     },
-    // Yeni eklemek için virgül koyup altına şunu yapıştırabilirsiniz:
-    // { id: 3, title: "Duyuru metni buraya", important: false },
+    {
+        id: 3,
+        title: "Kütüphane haftası etkinlikleri kapsamında kitap okuma saati.",
+        important: false
+    }
   ]
 };

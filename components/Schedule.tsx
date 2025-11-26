@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { getSchedule } from '../services/dataService';
 import { LessonRow } from '../types';
 
+// Manual day mapping to avoid TV browser locale issues (e.g. "Monday" vs "Pazartesi")
+const DAYS_TR = ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"];
+
 const Schedule: React.FC = () => {
   const [schedule, setSchedule] = useState<LessonRow[]>([]);
   const [dayName, setDayName] = useState('');
@@ -10,12 +13,16 @@ const Schedule: React.FC = () => {
     const fetch = async () => {
       try {
         const rows = await getSchedule();
-        const today = new Date().toLocaleDateString('tr-TR', { weekday: 'long' });
-        setDayName(today);
         
-        // Proper Turkish normalization
+        // Use getDay() which returns 0-6, independent of system language
+        const dayIndex = new Date().getDay();
+        const todayTR = DAYS_TR[dayIndex];
+        
+        setDayName(todayTR);
+        
+        // Proper Turkish normalization for key matching
         const normalize = (s: string) => s.toLocaleLowerCase('tr-TR').normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-        const key = normalize(today);
+        const key = normalize(todayTR);
 
         const filtered = rows.filter(r => normalize(r.GÜN || '') === key);
         setSchedule(filtered);
@@ -54,7 +61,7 @@ const Schedule: React.FC = () => {
             {schedule.length === 0 ? (
                  <tr>
                      <td colSpan={8} className="text-center py-10 text-sm text-slate-500 italic">
-                         Bugün için ders programı bulunamadı.
+                         Ders programı yükleniyor veya bugün ders yok.
                      </td>
                  </tr>
             ) : (

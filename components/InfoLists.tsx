@@ -1,8 +1,7 @@
-
 import React, { useEffect, useState } from 'react';
-import { getBirthdays, getDuties, getEvents, getNews, parseDateStr } from '../services/dataService';
-import { BirthdayRow, DutyRow, EventRow, NewsItem } from '../types';
-import { Cake, Calendar, Megaphone, UserCheck, Pin } from 'lucide-react';
+import { getBirthdays, getDuties, getEvents, parseDateStr } from '../services/dataService';
+import { BirthdayRow, DutyRow, EventRow } from '../types';
+import { Cake, Calendar, Megaphone, UserCheck, AlertCircle } from 'lucide-react';
 import { USER_CONFIG } from '../userConfig';
 
 const ListContainer: React.FC<{ title: string; icon: React.ReactNode; children: React.ReactNode, color?: string }> = ({ title, icon, children, color = "bg-slate-800" }) => (
@@ -23,14 +22,14 @@ export const DutyTeachers: React.FC = () => {
   useEffect(() => {
     getDuties().then(rows => {
       const today = new Date();
-      // Reset time to compare dates only
-      today.setHours(0,0,0,0);
       
       const found = rows.find(r => {
         const d = parseDateStr(r.TARİH);
         if (!d) return false;
-        d.setHours(0,0,0,0);
-        return d.getTime() === today.getTime();
+        // Compare Day, Month, Year individually to avoid Timezone/Hour issues on TV browsers
+        return d.getDate() === today.getDate() &&
+               d.getMonth() === today.getMonth() &&
+               d.getFullYear() === today.getFullYear();
       });
 
       if (found) {
@@ -48,7 +47,7 @@ export const DutyTeachers: React.FC = () => {
   return (
     <ListContainer title="Nöbetçi Öğretmenler" icon={<UserCheck size={18} className="text-yellow-400" />}>
       {list.length === 0 ? (
-          <div className="text-center text-xs text-slate-500 mt-4">Nöbetçi bilgisi yok</div>
+          <div className="text-center text-xs text-slate-500 mt-4">Bugün için nöbetçi bilgisi girilmemiş.</div>
       ) : (
           list.map((item, i) => (
             <div key={i} className="flex flex-col py-2 border-b border-slate-700/30 last:border-0">
@@ -62,45 +61,24 @@ export const DutyTeachers: React.FC = () => {
 };
 
 export const AnnouncementsList: React.FC = () => {
-    const [news, setNews] = useState<NewsItem[]>([]);
-
-    useEffect(() => {
-        getNews().then(items => {
-            // Take top 10 items
-            setNews(items.slice(0, 10));
-        });
-    }, []);
-
-    const manualAnnouncements = USER_CONFIG.MANUAL_ANNOUNCEMENTS || [];
+    // Sadece userConfig'den gelen veriyi kullanıyoruz
+    const list = USER_CONFIG.MANUAL_ANNOUNCEMENTS || [];
 
     return (
-        <ListContainer title="Duyurular" icon={<Megaphone size={18} className="text-blue-400" />}>
-            {/* MANUEL DUYURULAR (Sabitlenenler) */}
-            {manualAnnouncements.map((item) => (
-              <div key={`m-${item.id}`} className={`group flex gap-3 items-start p-2.5 rounded-xl transition-colors border mb-1 ${item.important ? 'bg-red-900/20 border-red-500/30 hover:bg-red-900/30' : 'bg-blue-900/10 border-blue-500/20 hover:bg-blue-900/20'}`}>
-                 <div className="mt-1">
-                   <Pin size={12} className={item.important ? "text-red-400 fill-red-400" : "text-blue-400 fill-blue-400"} />
-                 </div>
-                 <div className="flex-1">
-                     <div className={`text-[11px] font-bold leading-snug ${item.important ? 'text-red-100' : 'text-blue-100'}`}>
-                         {item.title}
-                     </div>
-                 </div>
-              </div>
-            ))}
-
-            {/* OTOMATİK HABERLER */}
-            {news.length === 0 && manualAnnouncements.length === 0 ? (
-                <div className="text-center text-xs text-slate-500 mt-4">Duyuru bulunamadı</div>
+        <ListContainer title="Duyuru Panosu" icon={<Megaphone size={18} className="text-blue-400" />}>
+            {list.length === 0 ? (
+                <div className="text-center text-xs text-slate-500 mt-4 italic">Aktif duyuru bulunmamaktadır.</div>
             ) : (
-                news.map((item, i) => (
-                    <div key={i} className="group flex gap-3 items-start p-2 rounded-xl hover:bg-white/5 transition-colors border border-transparent hover:border-white/5">
-                        <div className="mt-1.5 min-w-[4px] h-[4px] rounded-full bg-slate-600 group-hover:bg-slate-400"></div>
-                        <div className="flex-1">
-                            <div className="text-[11px] font-medium text-slate-400 leading-snug line-clamp-2 group-hover:text-slate-200 transition-colors">
-                                {item.title}
-                            </div>
-                        </div>
+                list.map((item, i) => (
+                    <div key={item.id || i} className={`flex items-start gap-3 py-2.5 border-b border-slate-700/30 last:border-0 ${item.important ? 'text-red-200' : 'text-slate-300'}`}>
+                        {item.important ? (
+                           <AlertCircle size={14} className="mt-0.5 shrink-0 text-red-500 animate-pulse" />
+                        ) : (
+                           <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0"></div>
+                        )}
+                        <span className="text-[11px] font-medium leading-snug">
+                            {item.title}
+                        </span>
                     </div>
                 ))
             )}

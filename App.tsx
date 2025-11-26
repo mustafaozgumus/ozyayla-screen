@@ -52,12 +52,12 @@ const App: React.FC = () => {
 
           {/* Right Column (Duties, Announcements, Events) - 2 units */}
           <div className="col-span-2 flex flex-col gap-4 h-full">
-             {/* Duty Teachers - reduced height */}
-             <div className="h-1/4 shrink-0 min-h-[140px]">
+             {/* Duty Teachers - Increased height (was h-1/4, now h-1/3 for more visibility) */}
+             <div className="h-1/3 min-h-[220px] shrink-0">
                 <DutyTeachers />
              </div>
              
-             {/* Announcements - New Panel */}
+             {/* Announcements - Flex fills remaining space (effectively shorter now) */}
              <div className="flex-1 min-h-0">
                 <AnnouncementsList />
              </div>
