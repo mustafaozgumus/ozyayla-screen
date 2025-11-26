@@ -12,7 +12,7 @@ export const USER_CONFIG = {
   MANUAL_ANNOUNCEMENTS: [
     {
       id: 1,
-      title: ,
+      title: "deneme",
       important: true 
     },
     {
