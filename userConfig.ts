@@ -3,7 +3,7 @@
 
 export const USER_CONFIG = {
   // Sağ üstte görünen Eğitim Öğretim Yılı yazısı
-  ACADEMIC_YEAR: "2024 - 2025",
+  ACADEMIC_YEAR: "2025 - 2026",
 
   // DUYURULAR LİSTESİ
   // Buraya yazdığınız maddeler sağ taraftaki Duyuru Panosu'nda görünür.
