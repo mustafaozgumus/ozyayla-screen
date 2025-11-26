@@ -28,43 +28,56 @@ const Schedule: React.FC = () => {
 
   return (
     <div className="glass-panel rounded-3xl p-5 flex flex-col h-full overflow-hidden">
-      <div className="flex items-center justify-between mb-4 pb-2 border-b border-white/10">
-        <div className="flex items-center gap-2">
-            <div className="w-1 h-5 rounded-full bg-gradient-to-b from-brand-red to-brand-softRed shadow-[0_0_10px_rgba(229,9,20,0.5)]"></div>
+      <div className="flex items-center justify-between mb-4 pb-2 border-b border-white/5 shrink-0">
+        <div className="flex items-center gap-3">
+            <div className="w-1.5 h-5 rounded-full bg-brand-red shadow-[0_0_10px_rgba(229,9,20,0.6)]"></div>
             <h3 className="text-sm font-bold uppercase tracking-wider text-slate-200">Ders Programı</h3>
         </div>
-        <span className="text-[10px] font-bold px-3 py-1 bg-slate-800 rounded-full border border-slate-700 text-slate-400 uppercase">
+        <span className="text-[10px] font-bold px-3 py-1 bg-slate-800/50 rounded-full border border-white/5 text-slate-400 uppercase tracking-widest">
           {dayName}
         </span>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-left border-separate border-spacing-y-2">
+      <div className="flex-1 overflow-hidden">
+        <table className="w-full text-left border-collapse">
           <thead>
             <tr>
-              {['Sınıf', '1', '2', '3', '4', '5', '6', '7'].map((h, i) => (
-                <th key={i} className="text-[10px] font-bold text-slate-500 uppercase pb-2 text-center">
+              <th className="text-[10px] font-bold text-slate-500 uppercase pb-3 text-center w-14">Sınıf</th>
+              {['1', '2', '3', '4', '5', '6', '7'].map((h, i) => (
+                <th key={i} className="text-[10px] font-bold text-slate-500 uppercase pb-3 text-center">
                   {h}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody>
+          <tbody className="text-xs">
             {schedule.length === 0 ? (
                  <tr>
-                     <td colSpan={8} className="text-center py-8 text-sm text-slate-500 italic">
+                     <td colSpan={8} className="text-center py-10 text-sm text-slate-500 italic">
                          Bugün için ders programı bulunamadı.
                      </td>
                  </tr>
             ) : (
                 schedule.map((row, idx) => (
-                <tr key={idx} className="group hover:-translate-y-0.5 transition-transform duration-200">
-                    <td className="bg-gradient-to-br from-brand-red to-brand-softRed text-white font-bold text-xs text-center py-2 px-2 rounded-l-lg shadow-lg shadow-red-900/20">
-                    {row.SINIF}
+                <tr key={idx} className="group border-b border-transparent last:border-0">
+                    {/* Sınıf Adı */}
+                    <td className="py-1.5 px-1">
+                      <div className="bg-gradient-to-br from-brand-red to-brand-softRed text-white font-bold text-center rounded-lg shadow-lg shadow-red-900/20 py-2 text-[11px]">
+                        {row.SINIF}
+                      </div>
                     </td>
-                    {[row['1'], row['2'], row['3'], row['4'], row['5'], row['6'], row['7']].map((lesson, i, arr) => (
-                    <td key={i} className={`bg-slate-800/80 text-xs text-slate-300 font-medium text-center py-2 px-1 border-t border-b border-slate-700/50 ${i === arr.length - 1 ? 'rounded-r-lg border-r' : ''}`}>
-                        {lesson || '-'}
+                    {/* Dersler */}
+                    {[row['1'], row['2'], row['3'], row['4'], row['5'], row['6'], row['7']].map((lesson, i) => (
+                    <td key={i} className="text-slate-300 font-medium text-center align-middle p-1">
+                        <div className={`
+                            flex items-center justify-center rounded-lg py-2 px-1 min-h-[32px]
+                            ${idx % 2 === 0 ? 'bg-slate-800/30' : 'bg-transparent'} 
+                            group-hover:bg-slate-700/30 transition-colors
+                        `}>
+                          <div className="line-clamp-1 text-[11px] tracking-tight">
+                            {lesson || '-'}
+                          </div>
+                        </div>
                     </td>
                     ))}
                 </tr>

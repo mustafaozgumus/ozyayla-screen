@@ -29,7 +29,7 @@ const NewsSlider: React.FC = () => {
   const currentNews = news[currentIndex];
 
   return (
-    <div className="relative w-full aspect-video rounded-3xl overflow-hidden shadow-2xl border border-slate-700/50 group">
+    <div className="relative w-full aspect-video rounded-3xl overflow-hidden shadow-2xl border border-slate-700/50 group bg-slate-900">
       {/* Background Image with animation */}
       {news.map((item, index) => (
          <div 
@@ -48,10 +48,10 @@ const NewsSlider: React.FC = () => {
 
       {/* Content */}
       <div className="absolute bottom-0 left-0 w-full p-6 z-20">
-        <div className="inline-block px-4 py-1 mb-2 rounded-full bg-brand-red text-white text-[10px] font-bold uppercase tracking-wider shadow-lg shadow-red-900/50">
+        <div className="inline-block px-3 py-1 mb-2 rounded-full bg-brand-red text-white text-[10px] font-bold uppercase tracking-wider shadow-lg shadow-red-900/50">
             Duyurular
         </div>
-        <h2 className="text-xl md:text-2xl font-bold leading-tight text-white drop-shadow-md line-clamp-2 max-w-[90%]">
+        <h2 className="text-xl md:text-2xl font-bold leading-tight text-white drop-shadow-md line-clamp-2 max-w-[95%]">
           {currentNews.title}
         </h2>
       </div>

@@ -1,3 +1,4 @@
+
 export interface LessonRow {
   GÜN: string;
   SINIF: string;
@@ -30,6 +31,12 @@ export interface NewsItem {
   title: string;
   img: string;
   link: string;
+}
+
+export interface ManualAnnouncement {
+  id: number;
+  title: string;
+  important: boolean;
 }
 
 export interface WeatherData {
