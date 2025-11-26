@@ -61,13 +61,16 @@ export const DutyTeachers: React.FC = () => {
 };
 
 export const AnnouncementsList: React.FC = () => {
-    // Sadece userConfig'den gelen veriyi kullanıyoruz
-    const list = USER_CONFIG.MANUAL_ANNOUNCEMENTS || [];
+    // Check global toggle first, then load list
+    const show = USER_CONFIG.SHOW_ANNOUNCEMENTS;
+    const list = show ? (USER_CONFIG.MANUAL_ANNOUNCEMENTS || []) : [];
 
     return (
         <ListContainer title="Duyuru Panosu" icon={<Megaphone size={18} className="text-blue-400" />}>
             {list.length === 0 ? (
-                <div className="text-center text-xs text-slate-500 mt-4 italic">Aktif duyuru bulunmamaktadır.</div>
+                <div className="text-center text-xs text-slate-500 mt-4 italic">
+                    {show ? "Aktif duyuru bulunmamaktadır." : "Duyurular şu an kapalı."}
+                </div>
             ) : (
                 list.map((item, i) => (
                     <div key={item.id || i} className={`flex items-start gap-3 py-2.5 border-b border-slate-700/30 last:border-0 ${item.important ? 'text-red-200' : 'text-slate-300'}`}>

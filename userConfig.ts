@@ -5,6 +5,11 @@ export const USER_CONFIG = {
   // Sağ üstte görünen Eğitim Öğretim Yılı yazısı
   ACADEMIC_YEAR: "2025 - 2026",
 
+  // DUYURULARI GÖSTER / GİZLE
+  // Burayı 'false' yaparsanız duyuru panosundaki yazılar görünmez.
+  // Tekrar açmak için 'true' yapmanız yeterlidir.
+  SHOW_ANNOUNCEMENTS: false,
+
   // DUYURULAR LİSTESİ
   // Buraya yazdığınız maddeler sağ taraftaki Duyuru Panosu'nda görünür.
   // "important: true" yaparsanız yazının yanında kırmızı uyarı ikonu çıkar.
