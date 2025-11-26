@@ -5,7 +5,7 @@ import { USER_CONFIG } from '../userConfig';
 
 const Header: React.FC = () => {
   return (
-    <div className="relative z-20 w-full px-8 pt-6 pb-2 shrink-0">
+    <div className="relative z-20 w-full px-8 pt-4 pb-2 shrink-0">
       <header className="max-w-[1120px] mx-auto bg-slate-900/40 backdrop-blur-2xl border border-white/5 rounded-2xl shadow-2xl px-6 py-3 flex items-center justify-between">
         
         {/* Left: Brand Identity */}

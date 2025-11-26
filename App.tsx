@@ -21,13 +21,13 @@ const App: React.FC = () => {
       <Header />
 
       {/* Main Grid Content */}
-      <main className="relative z-10 flex-1 px-8 pb-8 pt-4 overflow-hidden">
+      <main className="relative z-10 flex-1 px-6 pb-4 pt-2 overflow-hidden">
         {/* Max width constrained to safe area */}
-        <div className="w-full h-full max-w-[1120px] mx-auto grid grid-cols-10 grid-rows-[auto_1fr] gap-4">
+        <div className="w-full h-full max-w-[1120px] mx-auto grid grid-cols-10 grid-rows-[auto_1fr] gap-3">
           
           {/* Left Column (Weather & Clock) - 2 units */}
-          <div className="col-span-2 flex flex-col gap-4 h-full">
-            <div className="h-48 shrink-0">
+          <div className="col-span-2 flex flex-col gap-3 h-full">
+            <div className="h-44 shrink-0">
               <WeatherCard />
             </div>
             <div className="flex-1 shrink-0 min-h-0">
@@ -39,7 +39,7 @@ const App: React.FC = () => {
           </div>
 
           {/* Middle Column (News & Schedule) - 6 units */}
-          <div className="col-span-6 flex flex-col gap-4 h-full">
+          <div className="col-span-6 flex flex-col gap-3 h-full">
             {/* News Slider */}
             <div className="w-full shrink-0">
               <NewsSlider />
@@ -51,19 +51,19 @@ const App: React.FC = () => {
           </div>
 
           {/* Right Column (Duties, Announcements, Events) - 2 units */}
-          <div className="col-span-2 flex flex-col gap-4 h-full">
-             {/* Duty Teachers - Increased height (was h-1/4, now h-1/3 for more visibility) */}
-             <div className="h-1/3 min-h-[220px] shrink-0">
+          <div className="col-span-2 flex flex-col gap-3 h-full">
+             {/* Duty Teachers - Increased height */}
+             <div className="h-1/3 min-h-[200px] shrink-0">
                 <DutyTeachers />
              </div>
              
-             {/* Announcements - Flex fills remaining space (effectively shorter now) */}
+             {/* Announcements - Flex fills remaining space */}
              <div className="flex-1 min-h-0">
                 <AnnouncementsList />
              </div>
 
-             {/* Special Events - Fixed height at bottom */}
-             <div className="h-36 shrink-0">
+             {/* Special Events - Reduced Height */}
+             <div className="h-32 shrink-0">
                 <SpecialEvents />
              </div>
           </div>

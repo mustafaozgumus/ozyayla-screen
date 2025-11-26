@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { getBirthdays, getDuties, getEvents, parseDateStr } from '../services/dataService';
 import { BirthdayRow, DutyRow, EventRow } from '../types';
@@ -73,7 +74,7 @@ export const AnnouncementsList: React.FC = () => {
                 </div>
             ) : (
                 list.map((item, i) => (
-                    <div key={item.id || i} className={`flex items-start gap-3 py-2.5 border-b border-slate-700/30 last:border-0 ${item.important ? 'text-red-200' : 'text-slate-300'}`}>
+                    <div key={item.id || i} className={`flex items-start gap-3 py-2 border-b border-slate-700/30 last:border-0 ${item.important ? 'text-red-200' : 'text-slate-300'}`}>
                         {item.important ? (
                            <AlertCircle size={14} className="mt-0.5 shrink-0 text-red-500 animate-pulse" />
                         ) : (
@@ -113,11 +114,11 @@ export const Birthdays: React.FC = () => {
          <div className="text-center text-xs text-slate-500 mt-4">Bugün doğum günü yok</div>
       ) : (
         <>
-        <div className="bg-gradient-to-r from-pink-500/20 to-transparent p-2.5 rounded-xl mb-3 flex items-center gap-2 border border-pink-500/10">
+        <div className="bg-gradient-to-r from-pink-500/20 to-transparent p-2 rounded-xl mb-2 flex items-center gap-2 border border-pink-500/10">
             <span className="text-[10px] text-pink-200 font-bold uppercase tracking-wide">🎂 İyi ki doğdunuz!</span>
         </div>
         {list.map((item, i) => (
-            <div key={i} className="flex justify-between items-center bg-slate-800/40 p-2.5 rounded-xl border border-slate-700/50 mb-2">
+            <div key={i} className="flex justify-between items-center bg-slate-800/40 p-2 rounded-xl border border-slate-700/50 mb-1.5">
                 <span className="text-xs font-bold text-slate-200">{item['AD SOYAD']}</span>
                 <span className="text-[10px] font-bold text-slate-400 bg-slate-900/80 px-2 py-1 rounded-md">{item.SINIF}</span>
             </div>
@@ -158,9 +159,9 @@ export const SpecialEvents: React.FC = () => {
            <div className="text-center text-xs text-slate-500 mt-4">Yakın tarihte özel gün yok</div>
         ) : (
           list.map((item, i) => (
-              <div key={i} className="flex flex-col bg-slate-800/30 p-2.5 rounded-xl border border-slate-700/30 mb-2 last:mb-0">
+              <div key={i} className="flex flex-col bg-slate-800/30 p-2 rounded-xl border border-slate-700/30 mb-1.5 last:mb-0">
                   <span className="text-xs font-bold text-slate-200">{item['ÖZEL GÜN ADI']}</span>
-                  <span className="text-[10px] text-slate-500 mt-1 font-medium">{item.TARİH}</span>
+                  <span className="text-[10px] text-slate-500 mt-0.5 font-medium">{item.TARİH}</span>
               </div>
           ))
         )}
