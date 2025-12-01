@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { getWeather } from '../services/dataService';
 import { WeatherData } from '../types';
@@ -40,13 +41,13 @@ const WeatherCard: React.FC = () => {
   }));
 
   return (
-    <div className="glass-panel rounded-3xl p-5 flex flex-col justify-between h-full relative overflow-hidden group">
+    <div className="glass-panel rounded-3xl p-4 flex flex-col h-full relative overflow-hidden group">
         {/* Decorative background glow */}
         <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-500/20 rounded-full blur-3xl group-hover:bg-blue-500/30 transition-all duration-700"></div>
 
-      <div className="flex items-center gap-4 z-10">
+      <div className="flex-1 flex items-center gap-4 z-10">
         <div className="p-3 bg-slate-800/50 rounded-2xl shadow-inner border border-white/5">
-            {getIcon(current_weather.weathercode, 40)}
+            {getIcon(current_weather.weathercode, 42)}
         </div>
         <div>
           <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Hava Durumu</div>
@@ -58,9 +59,9 @@ const WeatherCard: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-2 mt-4 z-10">
+      <div className="grid grid-cols-4 gap-2 mt-2 z-10 shrink-0">
         {nextHours.map((h, idx) => (
-          <div key={idx} className="bg-slate-900/40 border border-slate-700/50 rounded-xl p-2 flex flex-col items-center justify-center text-center">
+          <div key={idx} className="bg-slate-900/40 border border-slate-700/50 rounded-xl p-1.5 flex flex-col items-center justify-center text-center">
             <span className="text-[10px] font-bold text-slate-400 mb-1">
               {new Date(h.time).getHours()}:00
             </span>

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Header from './components/Header';
 import WeatherCard from './components/WeatherCard';
@@ -21,26 +22,29 @@ const App: React.FC = () => {
       <Header />
 
       {/* Main Grid Content */}
-      <main className="relative z-10 flex-1 px-6 pb-4 pt-2 overflow-hidden">
+      <main className="relative z-10 flex-1 px-6 pb-4 pt-1 overflow-hidden">
         {/* Max width constrained to safe area */}
-        <div className="w-full h-full max-w-[1120px] mx-auto grid grid-cols-10 grid-rows-[auto_1fr] gap-3">
+        <div className="w-full h-full max-w-[1120px] mx-auto grid grid-cols-10 gap-2">
           
           {/* Left Column (Weather & Clock) - 2 units */}
-          <div className="col-span-2 flex flex-col gap-3 h-full">
-            <div className="h-44 shrink-0">
+          <div className="col-span-2 flex flex-col gap-2 h-full">
+            {/* Hava Durumu - Increased for hourly data */}
+            <div className="h-[28%] shrink-0">
               <WeatherCard />
             </div>
-            <div className="flex-1 shrink-0 min-h-0">
+            {/* Saat - Fixed percentage to prevent overlap */}
+            <div className="h-[42%] shrink-0">
                <ClockCard />
             </div>
-            <div className="flex-1 shrink-0 min-h-0">
+            {/* Doğum Günleri - Fills rest */}
+            <div className="h-[26%] shrink-0">
                <Birthdays />
             </div>
           </div>
 
           {/* Middle Column (News & Schedule) - 6 units */}
-          <div className="col-span-6 flex flex-col gap-3 h-full">
-            {/* News Slider */}
+          <div className="col-span-6 flex flex-col gap-2 h-full">
+            {/* News Slider - Fixed height ratio approx 16:9 relative to width */}
             <div className="w-full shrink-0">
               <NewsSlider />
             </div>
@@ -51,19 +55,19 @@ const App: React.FC = () => {
           </div>
 
           {/* Right Column (Duties, Announcements, Events) - 2 units */}
-          <div className="col-span-2 flex flex-col gap-3 h-full">
-             {/* Duty Teachers - Increased height */}
-             <div className="h-1/3 min-h-[200px] shrink-0">
+          <div className="col-span-2 flex flex-col gap-2 h-full">
+             {/* Duty Teachers - Massive height increase to prevent scroll */}
+             <div className="h-[55%] shrink-0">
                 <DutyTeachers />
              </div>
              
-             {/* Announcements - Flex fills remaining space */}
-             <div className="flex-1 min-h-0">
+             {/* Announcements - Reduced height since it is often empty or short */}
+             <div className="h-[25%] shrink-0">
                 <AnnouncementsList />
              </div>
 
-             {/* Special Events - Reduced Height */}
-             <div className="h-32 shrink-0">
+             {/* Special Events - Small fixed height at bottom */}
+             <div className="h-[15%] shrink-0">
                 <SpecialEvents />
              </div>
           </div>
