@@ -31,7 +31,7 @@ const AdminPanel: React.FC = () => {
     try {
       await setDoc(doc(db, "general", "settings"), {
         mode,
-        youtubeUrl,
+        youtubeUrl: youtubeUrl.trim(), // Trim whitespace from URL
         academicYear,
         showAnnouncements
       });

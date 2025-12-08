@@ -7,8 +7,9 @@ const VideoPlayer: React.FC = () => {
   // Extract Video ID from URL (supports Standard, Embed, Short, Mobile)
   const getVideoId = (url: string) => {
     if (!url) return null;
+    const cleanUrl = url.trim();
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/;
-    const match = url.match(regExp);
+    const match = cleanUrl.match(regExp);
     return (match && match[2].length === 11) ? match[2] : null;
   };
 
@@ -18,8 +19,9 @@ const VideoPlayer: React.FC = () => {
     <div className="w-full h-full bg-black flex items-center justify-center relative overflow-hidden">
       {videoId ? (
         <iframe
-          className="w-full h-full absolute inset-0 pointer-events-none"
+          className="w-full h-full absolute inset-0"
           // mute=1 is REQUIRED for autoplay to work on most browsers without user interaction
+          // pointer-events-none removed to allow manual play if autoplay fails
           src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${videoId}&rel=0&showinfo=0&iv_load_policy=3`}
           title="YouTube video player"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
