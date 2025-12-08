@@ -13,7 +13,7 @@ export interface LessonRow {
 
 export interface DutyRow {
   TARİH: string;
-  [key: string]: string; // Dynamic columns for duty locations (Bahçe, Koridor vs)
+  [key: string]: string; 
 }
 
 export interface BirthdayRow {
@@ -34,9 +34,10 @@ export interface NewsItem {
 }
 
 export interface ManualAnnouncement {
-  id: number;
+  id: string; // Firebase ID string olur
   title: string;
   important: boolean;
+  createdAt?: any;
 }
 
 export interface WeatherData {
@@ -60,4 +61,12 @@ export interface LessonStatus {
   dersNo?: number;
   isAlert: boolean;
   nextBellTime: Date | null;
+}
+
+// App Settings from Firebase
+export interface AppSettings {
+  mode: 'info' | 'video';
+  youtubeUrl: string;
+  academicYear: string;
+  showAnnouncements: boolean;
 }

@@ -1,16 +1,15 @@
-
 import React from 'react';
 import { School, Wifi } from 'lucide-react';
-import { USER_CONFIG } from '../userConfig';
+import { useConfig } from '../contexts/ConfigContext';
 
 const Header: React.FC = () => {
+  const { settings } = useConfig();
+
   return (
     <div className="relative z-20 w-full px-8 pt-4 pb-2 shrink-0">
       <header className="max-w-[1120px] mx-auto bg-slate-900/40 backdrop-blur-2xl border border-white/5 rounded-2xl shadow-2xl px-6 py-3 flex items-center justify-between">
         
-        {/* Left: Brand Identity */}
         <div className="flex items-center gap-5">
-          {/* Logo Container */}
           <div className="relative group">
             <div className="absolute inset-0 bg-brand-red blur-xl opacity-40 group-hover:opacity-60 transition-opacity duration-500"></div>
             <div className="relative w-10 h-10 bg-gradient-to-br from-slate-800 to-slate-950 rounded-lg border border-white/10 flex items-center justify-center shadow-lg overflow-hidden">
@@ -33,11 +32,10 @@ const Header: React.FC = () => {
           </div>
         </div>
         
-        {/* Right: Status Indicators */}
         <div className="flex items-center gap-4">
           <div className="hidden md:flex flex-col items-end mr-2">
             <span className="text-[9px] text-slate-400 font-semibold uppercase tracking-wider">Eğitim Öğretim Yılı</span>
-            <span className="text-[11px] text-slate-200 font-bold tracking-wide">{USER_CONFIG.ACADEMIC_YEAR}</span>
+            <span className="text-[11px] text-slate-200 font-bold tracking-wide">{settings.academicYear}</span>
           </div>
 
           <div className="h-8 w-px bg-white/10 mx-1 hidden md:block"></div>

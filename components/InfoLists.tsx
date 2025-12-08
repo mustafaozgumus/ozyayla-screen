@@ -1,9 +1,8 @@
-
 import React, { useEffect, useState } from 'react';
 import { getBirthdays, getDuties, getEvents, parseDateStr } from '../services/dataService';
-import { BirthdayRow, DutyRow, EventRow } from '../types';
+import { BirthdayRow, EventRow } from '../types';
 import { Cake, Calendar, Megaphone, UserCheck, AlertCircle } from 'lucide-react';
-import { USER_CONFIG } from '../userConfig';
+import { useConfig } from '../contexts/ConfigContext';
 
 const ListContainer: React.FC<{ title: string; icon: React.ReactNode; children: React.ReactNode, color?: string }> = ({ title, icon, children, color = "bg-slate-800" }) => (
   <div className="glass-panel rounded-3xl p-3 h-full flex flex-col">
@@ -27,7 +26,6 @@ export const DutyTeachers: React.FC = () => {
       const found = rows.find(r => {
         const d = parseDateStr(r.TARİH);
         if (!d) return false;
-        // Compare Day, Month, Year individually to avoid Timezone/Hour issues on TV browsers
         return d.getDate() === today.getDate() &&
                d.getMonth() === today.getMonth() &&
                d.getFullYear() === today.getFullYear();
@@ -62,18 +60,17 @@ export const DutyTeachers: React.FC = () => {
 };
 
 export const AnnouncementsList: React.FC = () => {
-    // Check global toggle first, then load list
-    const show = USER_CONFIG.SHOW_ANNOUNCEMENTS;
-    const list = show ? (USER_CONFIG.MANUAL_ANNOUNCEMENTS || []) : [];
+    const { settings, announcements } = useConfig();
+    const show = settings.showAnnouncements;
 
     return (
         <ListContainer title="Duyuru Panosu" icon={<Megaphone size={16} className="text-blue-400" />}>
-            {list.length === 0 ? (
+            {(!show || announcements.length === 0) ? (
                 <div className="text-center text-xs text-slate-500 mt-4 italic">
                     {show ? "Aktif duyuru bulunmamaktadır." : "Duyurular şu an kapalı."}
                 </div>
             ) : (
-                list.map((item, i) => (
+                announcements.map((item, i) => (
                     <div key={item.id || i} className={`flex items-start gap-2 py-1.5 border-b border-slate-700/30 last:border-0 ${item.important ? 'text-red-200' : 'text-slate-300'}`}>
                         {item.important ? (
                            <AlertCircle size={12} className="mt-0.5 shrink-0 text-red-500 animate-pulse" />
@@ -138,16 +135,14 @@ export const SpecialEvents: React.FC = () => {
           const nextWeek = new Date();
           nextWeek.setDate(today.getDate() + 7);
   
-          // Filter next 7 days
           const matches = rows.filter(r => {
               const d = parseDateStr(r.TARİH);
               if (!d) return false;
-              // Reset hours for comparison
               const dTime = d.setHours(0,0,0,0);
               const tTime = new Date().setHours(0,0,0,0);
               const nTime = nextWeek.setHours(0,0,0,0);
               return dTime >= tTime && dTime <= nTime;
-          }).slice(0, 3); // Limit to 3
+          }).slice(0, 3); 
 
           setList(matches);
       });
