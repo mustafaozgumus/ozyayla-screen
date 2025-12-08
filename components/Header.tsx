@@ -1,6 +1,7 @@
 import React from 'react';
 import { School, Wifi } from 'lucide-react';
 import { useConfig } from '../contexts/ConfigContext';
+import { Link } from 'react-router-dom';
 
 const Header: React.FC = () => {
   const { settings } = useConfig();
@@ -25,9 +26,11 @@ const Header: React.FC = () => {
             <div className="flex items-center gap-2">
               <span className="text-[10px] font-medium text-slate-400 tracking-[0.2em] uppercase">İlk & Ortaokulu</span>
               <div className="w-0.5 h-0.5 rounded-full bg-slate-600"></div>
-              <span className="text-[9px] font-bold text-brand-red uppercase tracking-widest bg-brand-red/10 px-1.5 py-px rounded border border-brand-red/20">
-                Bilgi Ekranı
-              </span>
+              <Link to="/admin" className="cursor-default focus:outline-none">
+                <span className="text-[9px] font-bold text-brand-red uppercase tracking-widest bg-brand-red/10 px-1.5 py-px rounded border border-brand-red/20 hover:bg-brand-red/20 transition-colors cursor-pointer">
+                  Bilgi Ekranı
+                </span>
+              </Link>
             </div>
           </div>
         </div>
