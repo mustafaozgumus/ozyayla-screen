@@ -33,21 +33,21 @@ const Schedule: React.FC = () => {
       <div className="flex items-center justify-between mb-3 pb-2 border-b border-white/5 shrink-0">
         <div className="flex items-center gap-2">
             <div className="w-1 h-4 rounded-full bg-brand-red shadow-[0_0_10px_rgba(229,9,20,0.6)]"></div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-200">Ders Programı</h3>
+            <h3 className="text-sm font-black uppercase tracking-widest text-white">DERS PROGRAMI</h3>
         </div>
-        <span className="text-[9px] font-bold px-2 py-0.5 bg-slate-800/50 rounded-full border border-white/5 text-slate-400 uppercase tracking-widest">
+        <span className="text-[10px] font-black px-3 py-1 bg-brand-red/20 rounded-full border border-brand-red/30 text-brand-softRed uppercase tracking-[0.2em]">
           {dayName}
         </span>
       </div>
 
       <div className="flex-1 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-slate-800">
         <table className="w-full text-left border-collapse table-fixed">
-          <thead className="sticky top-0 z-10 bg-slate-900/80 backdrop-blur-md">
+          <thead className="sticky top-0 z-10 bg-slate-900/90 backdrop-blur-md">
             <tr>
-              <th className="text-[9px] font-bold text-slate-500 uppercase pb-2 text-center w-12">SINIF</th>
+              <th className="text-[10px] font-black text-slate-500 uppercase pb-3 text-center w-14 tracking-tighter">SINIF</th>
               {['1', '2', '3', '4', '5', '6', '7'].map((h, i) => (
-                <th key={i} className="text-[9px] font-bold text-slate-500 uppercase pb-2 text-center">
-                  {h}
+                <th key={i} className="text-[10px] font-black text-slate-500 uppercase pb-3 text-center tracking-tighter">
+                  {h}. SAAT
                 </th>
               ))}
             </tr>
@@ -55,26 +55,26 @@ const Schedule: React.FC = () => {
           <tbody className="text-xs">
             {schedule.length === 0 ? (
                  <tr>
-                     <td colSpan={8} className="text-center py-8 text-xs text-slate-500 italic">
-                         Bugün ders yok.
+                     <td colSpan={8} className="text-center py-12 text-sm text-slate-500 font-bold italic">
+                         Bugün için kayıtlı ders programı bulunamadı.
                      </td>
                  </tr>
             ) : (
                 schedule.map((row, idx) => (
                 <tr key={idx} className="group border-b border-white/5 last:border-0">
-                    <td className="py-1 px-0.5">
-                      <div className="bg-gradient-to-br from-brand-red to-brand-softRed text-white font-bold text-center rounded-md shadow-lg shadow-red-900/20 py-1.5 text-[10px]">
+                    <td className="py-2 px-1">
+                      <div className="bg-gradient-to-br from-slate-700 to-slate-900 text-white font-black text-center rounded-lg border border-white/10 shadow-lg py-2.5 text-xs">
                         {row.SINIF}
                       </div>
                     </td>
                     {[row['1'], row['2'], row['3'], row['4'], row['5'], row['6'], row['7']].map((lesson, i) => (
-                    <td key={i} className="text-slate-300 font-medium text-center align-middle p-0.5">
+                    <td key={i} className="text-white font-black text-center align-middle p-1">
                         <div className={`
-                            flex items-center justify-center rounded-md py-1.5 px-0.5 min-h-[28px]
-                            ${idx % 2 === 0 ? 'bg-slate-800/20' : 'bg-transparent'} 
-                            group-hover:bg-slate-700/30 transition-colors
+                            flex items-center justify-center rounded-xl py-2.5 px-0.5 min-h-[44px]
+                            ${idx % 2 === 0 ? 'bg-slate-800/40' : 'bg-slate-800/10'} 
+                            group-hover:bg-brand-red/10 group-hover:border-brand-red/20 border border-transparent transition-all duration-300
                         `}>
-                          <div className="line-clamp-1 text-[10px] tracking-tight">
+                          <div className="line-clamp-1 text-[11px] md:text-xs uppercase tracking-tight text-white drop-shadow-sm">
                             {lesson || '-'}
                           </div>
                         </div>

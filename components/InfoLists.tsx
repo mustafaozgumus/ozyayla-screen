@@ -132,17 +132,22 @@ export const SpecialEvents: React.FC = () => {
     useEffect(() => {
       getEvents().then(rows => {
           const today = new Date();
-          const nextWeek = new Date();
-          nextWeek.setDate(today.getDate() + 7);
+          today.setHours(0,0,0,0);
   
-          const matches = rows.filter(r => {
+          // Bugünden itibaren gerçekleşecek tüm olayları bul ve tarihe göre sırala
+          const matches = rows
+            .filter(r => {
               const d = parseDateStr(r.TARİH);
               if (!d) return false;
-              const dTime = d.setHours(0,0,0,0);
-              const tTime = new Date().setHours(0,0,0,0);
-              const nTime = nextWeek.setHours(0,0,0,0);
-              return dTime >= tTime && dTime <= nTime;
-          }).slice(0, 3); 
+              d.setHours(0,0,0,0);
+              return d.getTime() >= today.getTime();
+            })
+            .sort((a, b) => {
+              const dA = parseDateStr(a.TARİH)?.getTime() || 0;
+              const dB = parseDateStr(b.TARİH)?.getTime() || 0;
+              return dA - dB;
+            })
+            .slice(0, 4); // En yakın 4 taneyi göster
 
           setList(matches);
       });
@@ -151,12 +156,15 @@ export const SpecialEvents: React.FC = () => {
     return (
       <ListContainer title="Özel Günler" icon={<Calendar size={16} className="text-green-400" />}>
         {list.length === 0 ? (
-           <div className="text-center text-xs text-slate-500 mt-2">Yakın tarihte özel gün yok</div>
+           <div className="text-center text-xs text-slate-500 mt-2">Yakın tarihte kayıtlı özel gün bulunmuyor.</div>
         ) : (
           list.map((item, i) => (
-              <div key={i} className="flex flex-col bg-slate-800/30 p-1.5 rounded-lg border border-slate-700/30 mb-1 last:mb-0">
-                  <span className="text-[10px] font-bold text-slate-200">{item['ÖZEL GÜN ADI']}</span>
-                  <span className="text-[9px] text-slate-500 mt-0.5 font-medium">{item.TARİH}</span>
+              <div key={i} className="flex flex-col bg-slate-800/40 p-2 rounded-xl border border-white/5 mb-1 last:mb-0 hover:bg-slate-800/60 transition-colors">
+                  <span className="text-[10px] font-black text-white leading-tight">{item['ÖZEL GÜN ADI']}</span>
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <div className="w-1 h-1 rounded-full bg-green-500"></div>
+                    <span className="text-[9px] text-slate-400 font-bold tracking-wider">{item.TARİH}</span>
+                  </div>
               </div>
           ))
         )}
