@@ -1,8 +1,8 @@
+
 import React, { useState, useEffect } from 'react';
 import { Clock } from 'lucide-react';
 import { LessonStatus } from '../types';
 
-// Bell Schedules
 const weekdayBellTimes = [
   "08:50","09:30", "09:45","10:25", "10:45","11:25", 
   "11:40","12:20", "13:05","13:45", "14:00","14:40", "14:55","15:35"
@@ -26,10 +26,8 @@ const calculateStatus = (now: Date): LessonStatus => {
     return d;
   });
 
-  // Find next bell
   const nextBell = times.find(t => t > now) || null;
 
-  // Determine current period index
   let lastIndex = -1;
   times.forEach((t, i) => {
     if (t <= now) lastIndex = i;
@@ -40,26 +38,20 @@ const calculateStatus = (now: Date): LessonStatus => {
   let dersNo = 0;
 
   if (lastIndex === -1) {
-    label = "Bugünkü dersler henüz başlamadı";
+    label = "Dersler başlamadı";
     type = 'before';
   } else if (lastIndex === times.length - 1 && (!nextBell)) {
-    label = "Bugünkü dersler bitti";
+    label = "Dersler bitti";
     type = 'after';
   } else if (lastIndex % 2 === 0) {
-    // Even index in this array means start of a lesson (0=Lesson 1 Start, 1=Lesson 1 End)
-    // Wait, array is [Start1, End1, Start2, End2...]
-    // Index 0 passed -> Inside Lesson 1
-    // Index 1 passed -> Inside Break 1
     dersNo = Math.floor(lastIndex / 2) + 1;
-    label = `Şu an derste • ${dersNo}. Ders`;
+    label = `${dersNo}. Ders`;
     type = 'class';
   } else {
-    label = "Şu an teneffüste";
+    label = "Teneffüs";
     type = 'break';
   }
 
-  // Alert logic: if next bell is within 10 seconds? (Original code used a change timestamp)
-  // Let's make it simple: if countdown < 1 minute, turn yellow/alert
   let isAlert = false;
   if (nextBell) {
       const diff = (nextBell.getTime() - now.getTime()) / 1000;
@@ -92,16 +84,16 @@ const ClockCard: React.FC = () => {
   })() : '--';
 
   return (
-    <div className={`glass-panel rounded-3xl p-6 flex flex-col items-center justify-center text-center transition-all duration-300 ${status.isAlert ? 'border-yellow-400 shadow-[0_0_30px_rgba(250,204,21,0.4)]' : ''}`}>
-      <Clock className="w-8 h-8 text-brand-softRed mb-2 opacity-80" />
-      <div className="text-4xl font-black tracking-widest tabular-nums leading-none">
+    <div className={`glass-panel rounded-3xl p-4 flex flex-col items-center justify-center text-center h-full transition-all duration-300 ${status.isAlert ? 'border-yellow-400 shadow-[0_0_30px_rgba(250,204,21,0.4)]' : ''}`}>
+      <Clock className="w-6 h-6 text-brand-softRed mb-1 opacity-80" />
+      <div className="text-4xl font-black tracking-widest tabular-nums leading-tight">
         {time.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
       </div>
-      <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-2 mb-4">
-        {time.toLocaleDateString('tr-TR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">
+        {time.toLocaleDateString('tr-TR', { weekday: 'long', day: 'numeric', month: 'long' })}
       </div>
 
-      <div className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider mb-3 transition-colors ${
+      <div className={`px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider mb-2 transition-colors ${
         status.isAlert ? 'bg-yellow-500 text-yellow-950 animate-pulse' : 'bg-slate-800 text-slate-200 border border-slate-700'
       }`}>
         {status.label}
@@ -109,8 +101,8 @@ const ClockCard: React.FC = () => {
 
       {status.nextBellTime && (
         <div className="flex flex-col animate-fade-in">
-          <span className="text-[10px] font-bold text-slate-400 tracking-wider">SONRAKİ ZİLE KALAN</span>
-          <span className="text-2xl font-black text-white tabular-nums tracking-wide">{timeLeftStr}</span>
+          <span className="text-[9px] font-bold text-slate-500 tracking-wider uppercase">Zile Kalan</span>
+          <span className="text-xl font-black text-white tabular-nums">{timeLeftStr}</span>
         </div>
       )}
     </div>

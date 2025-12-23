@@ -1,6 +1,7 @@
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { db } from '../services/firebase';
-import { AppSettings, ManualAnnouncement } from '../types';
+import { AppSettings, ManualAnnouncement, LayoutSettings } from '../types';
 import { doc, onSnapshot, collection, query, orderBy, QuerySnapshot, DocumentData } from 'firebase/firestore';
 
 interface ConfigContextType {
@@ -9,11 +10,21 @@ interface ConfigContextType {
   loading: boolean;
 }
 
+const defaultLayout: LayoutSettings = {
+  newsHeight: 35,
+  weatherHeight: 25,
+  clockHeight: 45,
+  dutyHeight: 50,
+  announceHeight: 30,
+  dashboardZoom: 85
+};
+
 const defaultSettings: AppSettings = {
   mode: 'info',
   youtubeUrl: 'https://www.youtube.com/watch?v=jfKfPfyJRdk',
   academicYear: '2025 - 2026',
   showAnnouncements: true,
+  layout: defaultLayout
 };
 
 const ConfigContext = createContext<ConfigContextType>({
@@ -30,18 +41,19 @@ export const ConfigProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 1. Listen to Settings
     const settingsRef = doc(db, "general", "settings");
     const unsubSettings = onSnapshot(settingsRef, (docSnap) => {
       if (docSnap.exists()) {
-        setSettings(docSnap.data() as AppSettings);
-      } else {
-        // Create default if not exists (Admin panel will handle write, but good to have fallback)
+        const data = docSnap.data() as AppSettings;
+        setSettings({
+          ...defaultSettings,
+          ...data,
+          layout: { ...defaultLayout, ...(data.layout || {}) }
+        });
       }
       setLoading(false);
     });
 
-    // 2. Listen to Announcements
     const q = query(collection(db, "announcements"), orderBy("createdAt", "desc"));
     const unsubAnnouncements = onSnapshot(q, (snapshot: QuerySnapshot<DocumentData>) => {
       const list: ManualAnnouncement[] = [];

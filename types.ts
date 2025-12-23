@@ -34,7 +34,7 @@ export interface NewsItem {
 }
 
 export interface ManualAnnouncement {
-  id: string; // Firebase ID string olur
+  id: string; 
   title: string;
   important: boolean;
   createdAt?: any;
@@ -63,10 +63,19 @@ export interface LessonStatus {
   nextBellTime: Date | null;
 }
 
-// App Settings from Firebase
+export interface LayoutSettings {
+  newsHeight: number;
+  weatherHeight: number;
+  clockHeight: number;
+  dutyHeight: number;
+  announceHeight: number;
+  dashboardZoom: number;
+}
+
 export interface AppSettings {
   mode: 'info' | 'video';
   youtubeUrl: string;
   academicYear: string;
   showAnnouncements: boolean;
+  layout?: LayoutSettings;
 }
