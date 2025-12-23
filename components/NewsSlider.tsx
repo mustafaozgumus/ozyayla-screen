@@ -20,7 +20,7 @@ const NewsSlider: React.FC = () => {
 
   if (news.length === 0) {
     return (
-      <div className="glass-panel rounded-3xl w-full aspect-video flex items-center justify-center text-slate-500 text-sm">
+      <div className="glass-panel rounded-3xl w-full h-full flex items-center justify-center text-slate-500 text-sm">
          Haberler yükleniyor...
       </div>
     );
@@ -29,7 +29,7 @@ const NewsSlider: React.FC = () => {
   const currentNews = news[currentIndex];
 
   return (
-    <div className="relative w-full aspect-video rounded-3xl overflow-hidden shadow-2xl border border-slate-700/50 group bg-slate-900">
+    <div className="relative w-full h-full rounded-3xl overflow-hidden shadow-2xl border border-slate-700/50 group bg-slate-900">
       {/* Background Image with animation */}
       {news.map((item, index) => (
          <div 
@@ -42,16 +42,18 @@ const NewsSlider: React.FC = () => {
                 className={`w-full h-full object-cover transition-transform duration-[10000ms] ease-linear ${index === currentIndex ? 'scale-110' : 'scale-100'}`}
             />
              {/* Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/60 to-transparent mix-blend-multiply opacity-90"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-transparent mix-blend-multiply opacity-80"></div>
          </div>
       ))}
 
       {/* Content */}
-      <div className="absolute bottom-0 left-0 w-full p-6 z-20">
-        <div className="inline-block px-3 py-1 mb-2 rounded-full bg-brand-red text-white text-[10px] font-bold uppercase tracking-wider shadow-lg shadow-red-900/50">
-            Duyurular
+      <div className="absolute bottom-0 left-0 w-full p-4 z-20">
+        <div className="flex items-center gap-2 mb-1">
+          <div className="px-2 py-0.5 rounded-md bg-brand-red text-white text-[9px] font-bold uppercase tracking-wider">
+              GÜNCEL HABER
+          </div>
         </div>
-        <h2 className="text-xl md:text-2xl font-bold leading-tight text-white drop-shadow-md line-clamp-2 max-w-[95%]">
+        <h2 className="text-lg md:text-xl font-bold leading-tight text-white drop-shadow-lg line-clamp-1 max-w-[95%]">
           {currentNews.title}
         </h2>
       </div>
