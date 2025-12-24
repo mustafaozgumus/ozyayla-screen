@@ -72,13 +72,13 @@ export const AnnouncementsList: React.FC = () => {
                 </div>
             ) : (
                 announcements.map((item, i) => (
-                    <div key={item.id || i} className={`flex items-start gap-2 py-1.5 border-b border-slate-700/30 last:border-0 ${item.important ? 'text-red-200' : 'text-slate-300'}`}>
+                    <div key={item.id || i} className={`flex items-start gap-3 py-2.5 border-b border-slate-700/30 last:border-0 ${item.important ? 'bg-red-500/5 rounded-lg px-2 -mx-2' : ''}`}>
                         {item.important ? (
-                           <AlertCircle size={12} className="mt-0.5 shrink-0 text-red-500 animate-pulse" />
+                           <AlertCircle size={16} className="mt-0.5 shrink-0 text-red-500 animate-pulse" />
                         ) : (
-                           <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0"></div>
+                           <div className="mt-2 w-2 h-2 rounded-full bg-blue-500 shrink-0 shadow-[0_0_8px_rgba(59,130,246,0.5)]"></div>
                         )}
-                        <span className="text-[10px] font-medium leading-snug">
+                        <span className={`text-[14px] leading-relaxed ${item.important ? 'text-red-100 font-bold' : 'text-slate-200 font-medium'}`}>
                             {item.title}
                         </span>
                     </div>

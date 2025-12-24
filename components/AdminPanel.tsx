@@ -177,7 +177,7 @@ const AdminPanel: React.FC = () => {
               ) : (
                 announcements.map(item => (
                   <div key={item.id} className="flex items-center justify-between bg-white/5 p-4 rounded-2xl border border-white/5 group hover:bg-white/10 transition-colors">
-                    <span className={`text-sm pr-4 ${item.important ? 'text-red-400 font-bold' : 'text-slate-300'}`}>{item.title}</span>
+                    <span className={`text-base pr-4 ${item.important ? 'text-red-400 font-bold' : 'text-slate-200'}`}>{item.title}</span>
                     <button onClick={() => deleteDoc(doc(db, "announcements", item.id))} className="text-slate-600 hover:text-red-400 p-2 shrink-0 transition-colors">
                       <Trash2 size={18} />
                     </button>
