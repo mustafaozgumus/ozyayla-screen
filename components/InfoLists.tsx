@@ -140,25 +140,36 @@ export const Birthdays: React.FC = () => {
 };
 
 export const SpecialEvents: React.FC = () => {
-    const [list, setList] = useState<EventRow[]>([]);
+    const [list, setList] = useState<(EventRow & { isToday: boolean })[]>([]);
   
     useEffect(() => {
       getEvents().then(rows => {
           const today = new Date();
-          const todayTime = new Date().setHours(0,0,0,0);
-          const limitDate = new Date();
-          limitDate.setDate(today.getDate() + 30); // 30 gün ileriye bak
-          const limitTime = limitDate.setHours(23,59,59,999);
+          const todayStart = new Date();
+          todayStart.setHours(0, 0, 0, 0);
+          const todayEnd = new Date();
+          todayEnd.setHours(23, 59, 59, 999);
+
+          const pastLimit = new Date();
+          pastLimit.setDate(today.getDate() - 3);
+          const pastTime = pastLimit.setHours(0, 0, 0, 0);
+
+          const futureLimit = new Date();
+          futureLimit.setDate(today.getDate() + 3);
+          const futureTime = futureLimit.setHours(23, 59, 59, 999);
   
           const processed = rows
-            .map(r => ({ ...r, parsedDate: parseDateStr(r.TARİH) }))
+            .map(r => {
+                const parsedDate = parseDateStr(r.TARİH);
+                const isToday = parsedDate ? (parsedDate >= todayStart && parsedDate <= todayEnd) : false;
+                return { ...r, parsedDate, isToday };
+            })
             .filter(item => {
               if (!item.parsedDate) return false;
               const itemTime = item.parsedDate.getTime();
-              return itemTime >= todayTime && itemTime <= limitTime;
+              return itemTime >= pastTime && itemTime <= futureTime;
             })
-            .sort((a, b) => (a.parsedDate?.getTime() || 0) - (b.parsedDate?.getTime() || 0))
-            .slice(0, 5); // En yakın 5 etkinliği göster
+            .sort((a, b) => (a.parsedDate?.getTime() || 0) - (b.parsedDate?.getTime() || 0));
 
           setList(processed);
       });
@@ -167,12 +178,19 @@ export const SpecialEvents: React.FC = () => {
     return (
       <ListContainer title="Özel Günler" icon={<Calendar size={16} className="text-green-400" />}>
         {list.length === 0 ? (
-           <div className="text-center text-xs text-slate-500 mt-2 italic">Yakın tarihte (30 gün) özel gün yok</div>
+           <div className="text-center text-xs text-slate-500 mt-2 italic px-2">Yakın tarihte (±3 gün) özel gün bulunmamaktadır.</div>
         ) : (
           list.map((item, i) => (
-              <div key={i} className="flex flex-col bg-slate-800/30 p-1.5 rounded-lg border border-slate-700/30 mb-1 last:mb-0 hover:bg-slate-700/40 transition-colors">
-                  <span className="text-[10px] font-bold text-slate-200">{item['ÖZEL GÜN ADI']}</span>
-                  <span className="text-[9px] text-slate-500 mt-0.5 font-medium">{item.TARİH}</span>
+              <div key={i} className={`flex flex-col p-1.5 rounded-lg border mb-1 last:mb-0 transition-colors ${item.isToday ? 'bg-green-500/20 border-green-500/40 shadow-[0_0_10px_rgba(34,197,94,0.1)]' : 'bg-slate-800/30 border-slate-700/30 hover:bg-slate-700/40'}`}>
+                  <div className="flex items-center justify-between gap-2">
+                    <span className={`text-[10px] font-bold ${item.isToday ? 'text-green-300' : 'text-slate-200'}`}>
+                        {item['ÖZEL GÜN ADI']}
+                    </span>
+                    {item.isToday && (
+                        <span className="text-[7px] font-black bg-green-500 text-white px-1 py-0.5 rounded uppercase tracking-tighter shrink-0">BUGÜN</span>
+                    )}
+                  </div>
+                  <span className={`text-[9px] mt-0.5 font-medium ${item.isToday ? 'text-green-400/80' : 'text-slate-500'}`}>{item.TARİH}</span>
               </div>
           ))
         )}
