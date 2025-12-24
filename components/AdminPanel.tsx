@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useConfig } from '../contexts/ConfigContext';
 import { db } from '../services/firebase';
 import { doc, setDoc, collection, addDoc, deleteDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
-import { Save, Trash2, Plus, Monitor, Youtube, Megaphone, ArrowLeft, Layout, Sliders, Laptop, Settings, CheckCircle2 } from 'lucide-react';
+import { Save, Trash2, Plus, Monitor, Youtube, Megaphone, ArrowLeft, Layout, Sliders, Laptop, Settings, CheckCircle2, Type } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const AdminPanel: React.FC = () => {
@@ -130,11 +130,11 @@ const AdminPanel: React.FC = () => {
 
         {/* Orta Kolon: Yerleşim Ayarları ve Duyurular */}
         <div className="lg:col-span-8 space-y-6">
-          {/* Duyurular - En Üste Alındı */}
+          {/* Duyurular */}
           <section className="bg-slate-900/50 border border-white/5 rounded-3xl p-5 shadow-xl">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-sm font-bold flex items-center gap-2 text-slate-400 uppercase tracking-wider">
-                <Megaphone size={18} className="text-pink-400" /> Duyuru Ekle
+                <Megaphone size={18} className="text-pink-400" /> Duyuru Yönetimi
               </h2>
               <button onClick={() => {
                 const nv = !showAnnouncements;
@@ -143,6 +143,29 @@ const AdminPanel: React.FC = () => {
               }} className={`px-4 py-2 rounded-full text-[10px] font-bold uppercase transition-all ${showAnnouncements ? 'bg-green-500/20 text-green-400 border border-green-500/20' : 'bg-slate-800 text-slate-500 border border-white/5'}`}>
                 {showAnnouncements ? "Panel Açık" : "Panel Kapalı"}
               </button>
+            </div>
+
+            {/* Yeni Punto Ayarı */}
+            <div className="mb-8 p-4 bg-slate-950/40 rounded-2xl border border-white/5 space-y-4">
+               <div className="flex items-center justify-between">
+                  <h3 className="text-xs font-bold text-slate-400 flex items-center gap-2 uppercase tracking-widest">
+                    <Type size={16} className="text-blue-400" /> Duyuru Yazı Boyutu (Punto)
+                  </h3>
+                  <span className="bg-blue-600 text-white px-3 py-1 rounded-lg text-sm font-black">{layout.announcementFontSize}px</span>
+               </div>
+               <input 
+                  type="range" 
+                  min="10" 
+                  max="32" 
+                  value={layout.announcementFontSize} 
+                  onChange={(e) => updateLayout('announcementFontSize', parseInt(e.target.value))} 
+                  className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-blue-500" 
+               />
+               <div className="flex justify-between text-[10px] text-slate-500 font-bold uppercase">
+                  <span>Küçük</span>
+                  <span>Normal (14px)</span>
+                  <span>Çok Büyük</span>
+               </div>
             </div>
 
             <div className="flex flex-col gap-3 mb-6">
@@ -177,7 +200,7 @@ const AdminPanel: React.FC = () => {
               ) : (
                 announcements.map(item => (
                   <div key={item.id} className="flex items-center justify-between bg-white/5 p-4 rounded-2xl border border-white/5 group hover:bg-white/10 transition-colors">
-                    <span className={`text-base pr-4 ${item.important ? 'text-red-400 font-bold' : 'text-slate-200'}`}>{item.title}</span>
+                    <span className="text-base pr-4" style={{ color: item.important ? '#f87171' : '#e2e8f0', fontWeight: item.important ? 'bold' : 'normal' }}>{item.title}</span>
                     <button onClick={() => deleteDoc(doc(db, "announcements", item.id))} className="text-slate-600 hover:text-red-400 p-2 shrink-0 transition-colors">
                       <Trash2 size={18} />
                     </button>

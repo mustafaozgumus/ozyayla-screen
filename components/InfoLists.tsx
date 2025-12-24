@@ -63,6 +63,7 @@ export const DutyTeachers: React.FC = () => {
 export const AnnouncementsList: React.FC = () => {
     const { settings, announcements } = useConfig();
     const show = settings.showAnnouncements;
+    const fontSize = settings.layout?.announcementFontSize || 14;
 
     return (
         <ListContainer title="Duyuru Panosu" icon={<Megaphone size={16} className="text-blue-400" />}>
@@ -74,11 +75,14 @@ export const AnnouncementsList: React.FC = () => {
                 announcements.map((item, i) => (
                     <div key={item.id || i} className={`flex items-start gap-3 py-2.5 border-b border-slate-700/30 last:border-0 ${item.important ? 'bg-red-500/5 rounded-lg px-2 -mx-2' : ''}`}>
                         {item.important ? (
-                           <AlertCircle size={16} className="mt-0.5 shrink-0 text-red-500 animate-pulse" />
+                           <AlertCircle size={fontSize + 2} className="mt-0.5 shrink-0 text-red-500 animate-pulse" />
                         ) : (
-                           <div className="mt-2 w-2 h-2 rounded-full bg-blue-500 shrink-0 shadow-[0_0_8px_rgba(59,130,246,0.5)]"></div>
+                           <div style={{ marginTop: `${(fontSize/2) - 1}px` }} className="w-2 h-2 rounded-full bg-blue-500 shrink-0 shadow-[0_0_8px_rgba(59,130,246,0.5)]"></div>
                         )}
-                        <span className={`text-[14px] leading-relaxed ${item.important ? 'text-red-100 font-bold' : 'text-slate-200 font-medium'}`}>
+                        <span 
+                          style={{ fontSize: `${fontSize}px` }}
+                          className={`leading-relaxed ${item.important ? 'text-red-100 font-bold' : 'text-slate-200 font-medium'}`}
+                        >
                             {item.title}
                         </span>
                     </div>

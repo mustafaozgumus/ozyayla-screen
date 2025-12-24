@@ -16,7 +16,8 @@ const defaultLayout: LayoutSettings = {
   clockHeight: 45,
   dutyHeight: 50,
   announceHeight: 30,
-  dashboardZoom: 85
+  dashboardZoom: 85,
+  announcementFontSize: 14
 };
 
 const defaultSettings: AppSettings = {

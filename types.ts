@@ -70,6 +70,7 @@ export interface LayoutSettings {
   dutyHeight: number;
   announceHeight: number;
   dashboardZoom: number;
+  announcementFontSize: number;
 }
 
 export interface AppSettings {
