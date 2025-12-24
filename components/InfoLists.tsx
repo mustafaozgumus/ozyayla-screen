@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { getBirthdays, getDuties, getEvents, parseDateStr } from '../services/dataService';
 import { BirthdayRow, EventRow } from '../types';
@@ -132,29 +133,32 @@ export const SpecialEvents: React.FC = () => {
     useEffect(() => {
       getEvents().then(rows => {
           const today = new Date();
-          const nextWeek = new Date();
-          nextWeek.setDate(today.getDate() + 7);
+          const todayTime = new Date().setHours(0,0,0,0);
+          const limitDate = new Date();
+          limitDate.setDate(today.getDate() + 30); // 30 gün ileriye bak
+          const limitTime = limitDate.setHours(23,59,59,999);
   
-          const matches = rows.filter(r => {
-              const d = parseDateStr(r.TARİH);
-              if (!d) return false;
-              const dTime = d.setHours(0,0,0,0);
-              const tTime = new Date().setHours(0,0,0,0);
-              const nTime = nextWeek.setHours(0,0,0,0);
-              return dTime >= tTime && dTime <= nTime;
-          }).slice(0, 3); 
+          const processed = rows
+            .map(r => ({ ...r, parsedDate: parseDateStr(r.TARİH) }))
+            .filter(item => {
+              if (!item.parsedDate) return false;
+              const itemTime = item.parsedDate.getTime();
+              return itemTime >= todayTime && itemTime <= limitTime;
+            })
+            .sort((a, b) => (a.parsedDate?.getTime() || 0) - (b.parsedDate?.getTime() || 0))
+            .slice(0, 5); // En yakın 5 etkinliği göster
 
-          setList(matches);
+          setList(processed);
       });
     }, []);
   
     return (
       <ListContainer title="Özel Günler" icon={<Calendar size={16} className="text-green-400" />}>
         {list.length === 0 ? (
-           <div className="text-center text-xs text-slate-500 mt-2">Yakın tarihte özel gün yok</div>
+           <div className="text-center text-xs text-slate-500 mt-2 italic">Yakın tarihte (30 gün) özel gün yok</div>
         ) : (
           list.map((item, i) => (
-              <div key={i} className="flex flex-col bg-slate-800/30 p-1.5 rounded-lg border border-slate-700/30 mb-1 last:mb-0">
+              <div key={i} className="flex flex-col bg-slate-800/30 p-1.5 rounded-lg border border-slate-700/30 mb-1 last:mb-0 hover:bg-slate-700/40 transition-colors">
                   <span className="text-[10px] font-bold text-slate-200">{item['ÖZEL GÜN ADI']}</span>
                   <span className="text-[9px] text-slate-500 mt-0.5 font-medium">{item.TARİH}</span>
               </div>

@@ -1,3 +1,4 @@
+
 import Papa from 'papaparse';
 import { BirthdayRow, DutyRow, EventRow, LessonRow, NewsItem, WeatherData } from '../types';
 
@@ -98,20 +99,28 @@ export const getNews = async (): Promise<NewsItem[]> => {
 export const parseDateStr = (str: string): Date | null => {
   if (!str) return null;
   const s = str.trim();
+  const currentYear = new Date().getFullYear();
   
   // Try YYYY-MM-DD
   const direct = new Date(s);
   if (!isNaN(direct.getTime())) return direct;
 
-  // Try DD.MM.YYYY or DD/MM/YYYY
+  // Try DD.MM.YYYY or DD.MM (Turkish format)
   const parts = s.split(/[\.\-\/]/);
+  
   if (parts.length === 3) {
-    // Assumption: if first part is 4 digits, it's YYYY. Else DD.
-    if (parts[0].length === 4) {
-       return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
-    } else {
+    // DD.MM.YYYY
+    if (parts[2].length === 4) {
        return new Date(Number(parts[2]), Number(parts[1]) - 1, Number(parts[0]));
+    } 
+    // YYYY.MM.DD
+    else if (parts[0].length === 4) {
+       return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
     }
+  } else if (parts.length === 2) {
+    // DD.MM assumes current year
+    return new Date(currentYear, Number(parts[1]) - 1, Number(parts[0]));
   }
+  
   return null;
 };
