@@ -163,7 +163,7 @@ const AdminPanel: React.FC = () => {
               </button>
             </div>
 
-            {/* Yeni Punto Ayarı */}
+            {/* Yeni Punto Ayarı - Range artırıldı */}
             <div className="mb-8 p-4 bg-slate-950/40 rounded-2xl border border-white/5 space-y-4">
                <div className="flex items-center justify-between">
                   <h3 className="text-xs font-bold text-slate-400 flex items-center gap-2 uppercase tracking-widest">
@@ -173,16 +173,17 @@ const AdminPanel: React.FC = () => {
                </div>
                <input 
                   type="range" 
-                  min="10" 
-                  max="32" 
+                  min="12" 
+                  max="100" 
+                  step="1"
                   value={layout.announcementFontSize} 
                   onChange={(e) => updateLayout('announcementFontSize', parseInt(e.target.value))} 
                   className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-blue-500" 
                />
                <div className="flex justify-between text-[10px] text-slate-500 font-bold uppercase">
                   <span>Küçük</span>
-                  <span>Normal (14px)</span>
-                  <span>Çok Büyük</span>
+                  <span>Normal</span>
+                  <span>Çok Büyük (TV)</span>
                </div>
             </div>
 

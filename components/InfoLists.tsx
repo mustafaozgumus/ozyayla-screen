@@ -72,22 +72,30 @@ export const AnnouncementsList: React.FC = () => {
                     {show ? "Aktif duyuru bulunmamaktadır." : "Duyurular şu an kapalı."}
                 </div>
             ) : (
-                announcements.map((item, i) => (
-                    <div key={item.id || i} className={`flex items-start gap-3 py-2.5 border-b border-slate-700/30 last:border-0 ${item.important ? 'bg-red-500/5 rounded-lg px-2 -mx-2' : ''}`}>
-                        {item.important ? (
-                           <AlertCircle size={fontSize + 2} className="mt-0.5 shrink-0 text-red-500 animate-pulse" />
-                        ) : (
-                           <div style={{ marginTop: `${(fontSize/2) - 1}px` }} className="w-2 h-2 rounded-full bg-blue-500 shrink-0 shadow-[0_0_8px_rgba(59,130,246,0.5)]"></div>
-                        )}
-                        <span 
-                          style={{ fontSize: `${fontSize}px` }}
-                          className={`leading-relaxed ${item.important ? 'text-red-100 font-bold' : 'text-slate-200 font-medium'}`}
-                        >
-                            {item.title}
-                        </span>
-                    </div>
-                ))
-            )}
+                <div className="space-y-2" key={fontSize}> {/* Force re-render on font size change */}
+                  {announcements.map((item, i) => (
+                      <div key={item.id || i} className={`flex items-start gap-3 py-2 border-b border-slate-700/30 last:border-0 ${item.important ? 'bg-red-500/5 rounded-lg px-2 -mx-2' : ''}`}>
+                          <div className="shrink-0 flex items-center justify-center" style={{ width: `${fontSize + 4}px`, height: `${fontSize * 1.5}px` }}>
+                            {item.important ? (
+                               <AlertCircle size={Math.max(14, fontSize * 0.9)} className="text-red-500 animate-pulse" />
+                            ) : (
+                               <div style={{ width: `${Math.max(4, fontSize * 0.3)}px`, height: `${Math.max(4, fontSize * 0.3)}px` }} className="rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]"></div>
+                            )}
+                          </div>
+                          <span 
+                            style={{ 
+                                fontSize: `${fontSize}px`,
+                                lineHeight: '1.4',
+                                display: 'block'
+                            }}
+                            className={`flex-1 break-words ${item.important ? 'text-red-100 font-bold' : 'text-slate-200 font-medium'}`}
+                          >
+                              {item.title}
+                          </span>
+                      </div>
+                  ))}
+                </div>
+            ) : null}
         </ListContainer>
     );
 };
