@@ -95,7 +95,7 @@ export const AnnouncementsList: React.FC = () => {
                       </div>
                   ))}
                 </div>
-            ) : null}
+            )}
         </ListContainer>
     );
 };
