@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { School, Wifi } from 'lucide-react';
 import { useConfig } from '../contexts/ConfigContext';
@@ -5,6 +6,11 @@ import { Link } from 'react-router-dom';
 
 const Header: React.FC = () => {
   const { settings } = useConfig();
+  
+  // Okul adını ilk kelime ve kalanlar olarak ayırma (Görsel hiyerarşi için)
+  const nameParts = settings.schoolName.split(' ');
+  const firstName = nameParts[0] || 'ÖZYAYLA';
+  const restOfName = nameParts.slice(1).join(' ');
 
   return (
     <div className="relative z-20 w-full px-8 pt-4 pb-2 shrink-0">
@@ -19,15 +25,17 @@ const Header: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex flex-col justify-center">
-            <h1 className="text-2xl font-black tracking-tighter text-white leading-none mb-0.5">
-              ÖZYAYLA
+          <div className="flex flex-col justify-center max-w-[500px]">
+            <h1 className="text-xl md:text-2xl font-black tracking-tighter text-white leading-none mb-0.5 uppercase">
+              {firstName}
             </h1>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-medium text-slate-400 tracking-[0.2em] uppercase">İlk & Ortaokulu</span>
-              <div className="w-0.5 h-0.5 rounded-full bg-slate-600"></div>
-              <Link to="/admin" className="cursor-default focus:outline-none">
-                <span className="text-[9px] font-bold text-brand-red uppercase tracking-widest bg-brand-red/10 px-1.5 py-px rounded border border-brand-red/20 hover:bg-brand-red/20 transition-colors cursor-pointer">
+              <span className="text-[9px] md:text-[10px] font-medium text-slate-400 tracking-wider uppercase truncate">
+                {restOfName || 'İLK & ORTAOKULU'}
+              </span>
+              <div className="w-0.5 h-0.5 rounded-full bg-slate-600 shrink-0"></div>
+              <Link to="/admin" className="cursor-default focus:outline-none shrink-0">
+                <span className="text-[8px] md:text-[9px] font-bold text-brand-red uppercase tracking-widest bg-brand-red/10 px-1.5 py-px rounded border border-brand-red/20 hover:bg-brand-red/20 transition-colors cursor-pointer">
                   Bilgi Ekranı
                 </span>
               </Link>
@@ -36,7 +44,7 @@ const Header: React.FC = () => {
         </div>
         
         <div className="flex items-center gap-4">
-          <div className="hidden md:flex flex-col items-end mr-2">
+          <div className="hidden lg:flex flex-col items-end mr-2">
             <span className="text-[9px] text-slate-400 font-semibold uppercase tracking-wider">Eğitim Öğretim Yılı</span>
             <span className="text-[11px] text-slate-200 font-bold tracking-wide">{settings.academicYear}</span>
           </div>

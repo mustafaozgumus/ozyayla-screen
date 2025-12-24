@@ -21,6 +21,7 @@ const defaultLayout: LayoutSettings = {
 };
 
 const defaultSettings: AppSettings = {
+  schoolName: 'Özyayla İlk ve Şehit Hüseyin İpek Ortaokulu',
   mode: 'info',
   youtubeUrl: 'https://www.youtube.com/watch?v=jfKfPfyJRdk',
   academicYear: '2025 - 2026',

@@ -3,12 +3,13 @@ import React, { useState } from 'react';
 import { useConfig } from '../contexts/ConfigContext';
 import { db } from '../services/firebase';
 import { doc, setDoc, collection, addDoc, deleteDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
-import { Save, Trash2, Plus, Monitor, Youtube, Megaphone, ArrowLeft, Layout, Sliders, Laptop, Settings, CheckCircle2, Type } from 'lucide-react';
+import { Save, Trash2, Plus, Monitor, Youtube, Megaphone, ArrowLeft, Layout, Sliders, Laptop, Settings, CheckCircle2, Type, School } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const AdminPanel: React.FC = () => {
   const { settings, announcements } = useConfig();
   
+  const [schoolName, setSchoolName] = useState(settings.schoolName);
   const [mode, setMode] = useState<'info' | 'video'>(settings.mode);
   const [youtubeUrl, setYoutubeUrl] = useState(settings.youtubeUrl);
   const [academicYear, setAcademicYear] = useState(settings.academicYear);
@@ -21,6 +22,7 @@ const AdminPanel: React.FC = () => {
   const [success, setSuccess] = useState(false);
 
   React.useEffect(() => {
+    setSchoolName(settings.schoolName);
     setMode(settings.mode);
     setYoutubeUrl(settings.youtubeUrl);
     setAcademicYear(settings.academicYear);
@@ -32,6 +34,7 @@ const AdminPanel: React.FC = () => {
     setSaving(true);
     try {
       await setDoc(doc(db, "general", "settings"), {
+        schoolName,
         mode,
         youtubeUrl: youtubeUrl.trim(),
         academicYear,
@@ -77,7 +80,7 @@ const AdminPanel: React.FC = () => {
             </div>
             <div>
               <h1 className="text-lg font-bold leading-none">Yönetim Paneli</h1>
-              <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold mt-1">Özyayla İlk-Ortaokulu</p>
+              <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold mt-1">Sistem Ayarları</p>
             </div>
           </div>
           <Link to="/" className="p-2 hover:bg-white/5 rounded-xl transition-colors">
@@ -92,7 +95,26 @@ const AdminPanel: React.FC = () => {
         <div className="lg:col-span-4 space-y-6">
           <section className="bg-slate-900/50 border border-white/5 rounded-3xl p-5 space-y-6">
             <h2 className="text-sm font-bold flex items-center gap-2 text-slate-400 uppercase tracking-wider">
-              <Monitor size={18} className="text-blue-400" /> Ekran Modu
+              <School size={18} className="text-blue-400" /> Kurum Bilgileri
+            </h2>
+            <div className="space-y-2">
+              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Okul Adı</label>
+              <textarea 
+                value={schoolName} 
+                onChange={(e) => setSchoolName(e.target.value)} 
+                className="w-full bg-slate-950/50 border border-white/5 rounded-xl px-4 py-3 text-sm focus:ring-1 focus:ring-blue-500 outline-none resize-none" 
+                rows={2}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Eğitim Yılı</label>
+              <input type="text" value={academicYear} onChange={(e) => setAcademicYear(e.target.value)} className="w-full bg-slate-950/50 border border-white/5 rounded-xl px-4 py-4 text-sm focus:ring-1 focus:ring-blue-500 outline-none" />
+            </div>
+            
+            <hr className="border-white/5" />
+
+            <h2 className="text-sm font-bold flex items-center gap-2 text-slate-400 uppercase tracking-wider">
+              <Monitor size={18} className="text-purple-400" /> Ekran Modu
             </h2>
             <div className="grid grid-cols-2 gap-3">
               <button onClick={() => setMode('info')} className={`flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all ${mode === 'info' ? 'border-blue-500 bg-blue-500/10 text-white' : 'border-slate-800 text-slate-500 hover:border-slate-700'}`}>
@@ -110,10 +132,6 @@ const AdminPanel: React.FC = () => {
                 <input type="text" value={youtubeUrl} onChange={(e) => setYoutubeUrl(e.target.value)} className="w-full bg-slate-950/50 border border-white/5 rounded-xl px-4 py-4 text-sm focus:ring-1 focus:ring-purple-500 outline-none" placeholder="https://youtube.com/..." />
               </div>
             )}
-            <div className="space-y-2">
-              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Eğitim Yılı</label>
-              <input type="text" value={academicYear} onChange={(e) => setAcademicYear(e.target.value)} className="w-full bg-slate-950/50 border border-white/5 rounded-xl px-4 py-4 text-sm focus:ring-1 focus:ring-blue-500 outline-none" />
-            </div>
           </section>
 
           <section className="bg-slate-900/50 border border-white/5 rounded-3xl p-5">

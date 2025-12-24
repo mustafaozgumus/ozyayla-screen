@@ -74,6 +74,7 @@ export interface LayoutSettings {
 }
 
 export interface AppSettings {
+  schoolName: string;
   mode: 'info' | 'video';
   youtubeUrl: string;
   academicYear: string;
