@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 const Header: React.FC = () => {
   const { settings } = useConfig();
   
-  // Okul adını ilk kelime ve kalanlar olarak ayırma (Görsel hiyerarşi için)
+  // Okul adını ilk kelime ve kalanlar olarak ayırma
   const nameParts = settings.schoolName.split(' ');
   const firstName = nameParts[0] || 'ÖZYAYLA';
   const restOfName = nameParts.slice(1).join(' ');
@@ -19,24 +19,24 @@ const Header: React.FC = () => {
         <div className="flex items-center gap-5">
           <div className="relative group">
             <div className="absolute inset-0 bg-brand-red blur-xl opacity-40 group-hover:opacity-60 transition-opacity duration-500"></div>
-            <div className="relative w-10 h-10 bg-gradient-to-br from-slate-800 to-slate-950 rounded-lg border border-white/10 flex items-center justify-center shadow-lg overflow-hidden">
+            <div className="relative w-11 h-11 bg-gradient-to-br from-slate-800 to-slate-950 rounded-xl border border-white/10 flex items-center justify-center shadow-lg overflow-hidden">
                <div className="absolute top-0 right-0 w-6 h-6 bg-brand-red/20 rounded-full blur-md -mr-2 -mt-2"></div>
-               <School className="text-brand-red w-5 h-5 z-10" />
+               <School className="text-brand-red w-6 h-6 z-10" />
             </div>
           </div>
 
-          <div className="flex flex-col justify-center max-w-[500px]">
-            <h1 className="text-xl md:text-2xl font-black tracking-tighter text-white leading-none mb-0.5 uppercase">
+          <div className="flex flex-col justify-center">
+            <h1 className="text-xl md:text-2xl font-black tracking-tighter text-white leading-none mb-1 uppercase">
               {firstName}
             </h1>
             <div className="flex items-center gap-2">
-              <span className="text-[9px] md:text-[10px] font-medium text-slate-400 tracking-wider uppercase truncate">
+              <span className="text-[10px] md:text-[11px] font-bold text-slate-300 tracking-[0.2em] uppercase whitespace-nowrap drop-shadow-sm">
                 {restOfName || 'İLK & ORTAOKULU'}
               </span>
-              <div className="w-0.5 h-0.5 rounded-full bg-slate-600 shrink-0"></div>
+              <div className="w-1 h-1 rounded-full bg-brand-red/60 shrink-0"></div>
               <Link to="/admin" className="cursor-default focus:outline-none shrink-0">
-                <span className="text-[8px] md:text-[9px] font-bold text-brand-red uppercase tracking-widest bg-brand-red/10 px-1.5 py-px rounded border border-brand-red/20 hover:bg-brand-red/20 transition-colors cursor-pointer">
-                  Bilgi Ekranı
+                <span className="text-[8px] md:text-[9px] font-black text-brand-red uppercase tracking-widest bg-brand-red/10 px-2 py-0.5 rounded border border-brand-red/20 hover:bg-brand-red/20 transition-all cursor-pointer">
+                  BİLGİ SİSTEMİ
                 </span>
               </Link>
             </div>
@@ -45,19 +45,19 @@ const Header: React.FC = () => {
         
         <div className="flex items-center gap-4">
           <div className="hidden lg:flex flex-col items-end mr-2">
-            <span className="text-[9px] text-slate-400 font-semibold uppercase tracking-wider">Eğitim Öğretim Yılı</span>
-            <span className="text-[11px] text-slate-200 font-bold tracking-wide">{settings.academicYear}</span>
+            <span className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Eğitim Öğretim Yılı</span>
+            <span className="text-[12px] text-slate-200 font-black tracking-tight">{settings.academicYear}</span>
           </div>
 
           <div className="h-8 w-px bg-white/10 mx-1 hidden md:block"></div>
 
-          <div className="flex items-center gap-2 bg-black/20 px-3 py-1.5 rounded-full border border-white/5">
+          <div className="flex items-center gap-2 bg-black/20 px-3 py-2 rounded-full border border-white/5 shadow-inner">
             <div className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
             </div>
-            <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">
-              Canlı
+            <span className="text-[10px] font-black text-slate-200 uppercase tracking-widest">
+              SİSTEM AKTİF
             </span>
             <Wifi size={14} className="text-slate-500 ml-1" />
           </div>
