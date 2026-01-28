@@ -1,12 +1,13 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { db } from '../services/firebase';
-import { AppSettings, ManualAnnouncement, LayoutSettings } from '../types';
+import { AppSettings, ManualAnnouncement, LayoutSettings, DutyRow } from '../types';
 import { doc, onSnapshot, collection, query, orderBy, QuerySnapshot, DocumentData } from 'firebase/firestore';
 
 interface ConfigContextType {
   settings: AppSettings;
   announcements: ManualAnnouncement[];
+  duties: DutyRow[];
   loading: boolean;
 }
 
@@ -32,6 +33,7 @@ const defaultSettings: AppSettings = {
 const ConfigContext = createContext<ConfigContextType>({
   settings: defaultSettings,
   announcements: [],
+  duties: [],
   loading: true,
 });
 
@@ -40,9 +42,11 @@ export const useConfig = () => useContext(ConfigContext);
 export const ConfigProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [settings, setSettings] = useState<AppSettings>(defaultSettings);
   const [announcements, setAnnouncements] = useState<ManualAnnouncement[]>([]);
+  const [duties, setDuties] = useState<DutyRow[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Listen to settings
     const settingsRef = doc(db, "general", "settings");
     const unsubSettings = onSnapshot(settingsRef, (docSnap) => {
       if (docSnap.exists()) {
@@ -56,8 +60,9 @@ export const ConfigProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       setLoading(false);
     });
 
-    const q = query(collection(db, "announcements"), orderBy("createdAt", "desc"));
-    const unsubAnnouncements = onSnapshot(q, (snapshot: QuerySnapshot<DocumentData>) => {
+    // Listen to announcements
+    const qAnnounce = query(collection(db, "announcements"), orderBy("createdAt", "desc"));
+    const unsubAnnouncements = onSnapshot(qAnnounce, (snapshot) => {
       const list: ManualAnnouncement[] = [];
       snapshot.forEach((doc) => {
         list.push({ id: doc.id, ...doc.data() } as ManualAnnouncement);
@@ -65,14 +70,25 @@ export const ConfigProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       setAnnouncements(list);
     });
 
+    // Listen to duties
+    const qDuties = query(collection(db, "duties"), orderBy("TARİH", "asc"));
+    const unsubDuties = onSnapshot(qDuties, (snapshot) => {
+      const list: DutyRow[] = [];
+      snapshot.forEach((doc) => {
+        list.push({ id: doc.id, ...doc.data() } as DutyRow);
+      });
+      setDuties(list);
+    });
+
     return () => {
       unsubSettings();
       unsubAnnouncements();
+      unsubDuties();
     };
   }, []);
 
   return (
-    <ConfigContext.Provider value={{ settings, announcements, loading }}>
+    <ConfigContext.Provider value={{ settings, announcements, duties, loading }}>
       {children}
     </ConfigContext.Provider>
   );

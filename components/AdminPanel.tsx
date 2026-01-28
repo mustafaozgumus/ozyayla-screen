@@ -1,13 +1,15 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useConfig } from '../contexts/ConfigContext';
 import { db } from '../services/firebase';
-import { doc, setDoc, collection, addDoc, deleteDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
-import { Save, Trash2, Plus, Monitor, Youtube, Megaphone, ArrowLeft, Layout, Sliders, Laptop, Settings, CheckCircle2, Type, School } from 'lucide-react';
+import { doc, setDoc, collection, addDoc, deleteDoc, serverTimestamp, updateDoc, writeBatch, getDocs } from 'firebase/firestore';
+import { Save, Trash2, Plus, Monitor, Youtube, Megaphone, ArrowLeft, Layout, Sliders, Laptop, Settings, CheckCircle2, Type, School, UserCheck, Upload, FileText, AlertTriangle, Calendar as CalendarIcon, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import Papa from 'papaparse';
+import { DutyRow } from '../types';
 
 const AdminPanel: React.FC = () => {
-  const { settings, announcements } = useConfig();
+  const { settings, announcements, duties } = useConfig();
   
   const [schoolName, setSchoolName] = useState(settings.schoolName);
   const [mode, setMode] = useState<'info' | 'video'>(settings.mode);
@@ -16,10 +18,21 @@ const AdminPanel: React.FC = () => {
   const [showAnnouncements, setShowAnnouncements] = useState(settings.showAnnouncements);
   const [layout, setLayout] = useState(settings.layout!);
 
+  // Nöbetçi Form State
+  const [newDuty, setNewDuty] = useState<Partial<DutyRow>>({
+    TARİH: new Date().toISOString().split('T')[0],
+    "BİNA İÇİ": "",
+    "BAHÇE": "",
+    "NÖBETÇİ OKUL ÖNCESİ": "",
+    "NÖBETÇİ MÜDÜR YRD.": ""
+  });
+
   const [newAnnounceTitle, setNewAnnounceTitle] = useState("");
   const [newAnnounceImportant, setNewAnnounceImportant] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
     setSchoolName(settings.schoolName);
@@ -65,6 +78,86 @@ const AdminPanel: React.FC = () => {
     }
   };
 
+  const handleAddDuty = async () => {
+    if (!newDuty.TARİH) return;
+    try {
+      await addDoc(collection(db, "duties"), {
+        ...newDuty,
+        createdAt: serverTimestamp()
+      });
+      // Reset some fields but keep date or increment? Let's just reset fields.
+      setNewDuty(prev => ({
+        ...prev,
+        "BİNA İÇİ": "",
+        "BAHÇE": "",
+        "NÖBETÇİ OKUL ÖNCESİ": "",
+        "NÖBETÇİ MÜDÜR YRD.": ""
+      }));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: async (results) => {
+        const batch = writeBatch(db);
+        const data = results.data as any[];
+        
+        try {
+          for (const row of data) {
+            const dutyRef = doc(collection(db, "duties"));
+            batch.set(dutyRef, {
+              TARİH: row.TARİH || "",
+              "BİNA İÇİ": row["BİNA İÇİ"] || "",
+              "BAHÇE": row["BAHÇE"] || "",
+              "NÖBETÇİ OKUL ÖNCESİ": row["NÖBETÇİ OKUL ÖNCESİ"] || "",
+              "NÖBETÇİ MÜDÜR YRD.": row["NÖBETÇİ MÜDÜR YRD."] || "",
+              createdAt: serverTimestamp()
+            });
+          }
+          await batch.commit();
+          alert(`${data.length} kayıt başarıyla yüklendi.`);
+        } catch (error) {
+          console.error("Batch upload error", error);
+          alert("Dosya yüklenirken hata oluştu.");
+        } finally {
+          setUploading(false);
+          if (fileInputRef.current) fileInputRef.current.value = "";
+        }
+      },
+      error: (error) => {
+        console.error("CSV Parse Error", error);
+        alert("CSV ayrıştırılamadı.");
+        setUploading(false);
+      }
+    });
+  };
+
+  const clearAllDuties = async () => {
+    if (!confirm("Tüm nöbetçi listesini silmek istediğinize emin misiniz? Bu işlem geri alınamaz.")) return;
+    
+    setUploading(true);
+    try {
+      const querySnapshot = await getDocs(collection(db, "duties"));
+      const batch = writeBatch(db);
+      querySnapshot.forEach((d) => {
+        batch.delete(d.ref);
+      });
+      await batch.commit();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const updateLayout = (key: keyof typeof layout, value: number) => {
     setLayout(prev => ({ ...prev, [key]: value }));
   };
@@ -73,7 +166,7 @@ const AdminPanel: React.FC = () => {
     <div className="min-h-screen bg-slate-950 text-slate-100 font-sans overflow-y-auto overflow-x-hidden pb-40">
       {/* Header */}
       <div className="sticky top-0 z-50 bg-slate-950/90 backdrop-blur-xl border-b border-white/5 px-4 py-4">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-blue-500/10 rounded-xl">
               <Settings className="text-blue-400 w-5 h-5" />
@@ -89,7 +182,7 @@ const AdminPanel: React.FC = () => {
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="max-w-6xl mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* Sol Kolon: Genel Ayarlar */}
         <div className="lg:col-span-4 space-y-6">
@@ -146,8 +239,122 @@ const AdminPanel: React.FC = () => {
           </section>
         </div>
 
-        {/* Orta Kolon: Yerleşim Ayarları ve Duyurular */}
+        {/* Orta & Sağ Kolon: İçerik Yönetimi */}
         <div className="lg:col-span-8 space-y-6">
+          
+          {/* Nöbetçi Yönetimi - YENİ */}
+          <section className="bg-slate-900/50 border border-white/5 rounded-3xl p-5 shadow-xl">
+             <div className="flex items-center justify-between mb-6">
+                <h2 className="text-sm font-bold flex items-center gap-2 text-emerald-400 uppercase tracking-wider">
+                  <UserCheck size={18} /> Nöbetçi Yönetimi
+                </h2>
+                <div className="flex gap-2">
+                  <input 
+                    type="file" 
+                    accept=".csv" 
+                    className="hidden" 
+                    ref={fileInputRef} 
+                    onChange={handleFileUpload} 
+                  />
+                  <button 
+                    onClick={() => fileInputRef.current?.click()} 
+                    disabled={uploading}
+                    className="bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 px-4 py-2 rounded-xl text-xs font-bold hover:bg-emerald-600/30 transition-all flex items-center gap-2"
+                  >
+                    {uploading ? <Loader2 className="animate-spin w-3 h-3" /> : <Upload size={14} />} CSV Yükle
+                  </button>
+                  <button 
+                    onClick={clearAllDuties}
+                    className="bg-red-600/20 text-red-400 border border-red-500/30 px-4 py-2 rounded-xl text-xs font-bold hover:bg-red-600/30 transition-all flex items-center gap-2"
+                  >
+                    <Trash2 size={14} /> Temizle
+                  </button>
+                </div>
+             </div>
+
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div className="space-y-4 bg-slate-950/40 p-4 rounded-2xl border border-white/5">
+                   <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 flex items-center gap-2">
+                      <Plus size={14} /> Manuel Kayıt Ekle
+                   </h3>
+                   <div className="grid grid-cols-1 gap-3">
+                      <div className="flex flex-col gap-1">
+                        <label className="text-[9px] font-bold text-slate-600 uppercase ml-1">Tarih</label>
+                        <input 
+                          type="date" 
+                          value={newDuty.TARİH} 
+                          onChange={(e) => setNewDuty({...newDuty, TARİH: e.target.value})} 
+                          className="bg-slate-900 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-emerald-500" 
+                        />
+                      </div>
+                      <input 
+                        placeholder="Bina İçi" 
+                        value={newDuty["BİNA İÇİ"]} 
+                        onChange={(e) => setNewDuty({...newDuty, "BİNA İÇİ": e.target.value})} 
+                        className="bg-slate-900 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-emerald-500" 
+                      />
+                      <input 
+                        placeholder="Bahçe" 
+                        value={newDuty["BAHÇE"]} 
+                        onChange={(e) => setNewDuty({...newDuty, "BAHÇE": e.target.value})} 
+                        className="bg-slate-900 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-emerald-500" 
+                      />
+                      <input 
+                        placeholder="Okul Öncesi" 
+                        value={newDuty["NÖBETÇİ OKUL ÖNCESİ"]} 
+                        onChange={(e) => setNewDuty({...newDuty, "NÖBETÇİ OKUL ÖNCESİ": e.target.value})} 
+                        className="bg-slate-900 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-emerald-500" 
+                      />
+                      <input 
+                        placeholder="Müdür Yrd." 
+                        value={newDuty["NÖBETÇİ MÜDÜR YRD."]} 
+                        onChange={(e) => setNewDuty({...newDuty, "NÖBETÇİ MÜDÜR YRD.": e.target.value})} 
+                        className="bg-slate-900 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-emerald-500" 
+                      />
+                      <button 
+                        onClick={handleAddDuty}
+                        className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-emerald-900/20 text-xs"
+                      >
+                        KAYDI EKLE
+                      </button>
+                   </div>
+                </div>
+
+                <div className="space-y-2 flex flex-col h-full">
+                   <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1 flex items-center gap-2">
+                      <FileText size={14} /> Kayıtlı Nöbetçiler ({duties.length})
+                   </h3>
+                   <div className="flex-1 max-h-[280px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-slate-800 space-y-2">
+                      {duties.length === 0 ? (
+                        <div className="text-center py-10 text-slate-600 text-xs italic bg-white/2 rounded-2xl border border-dashed border-white/5">
+                           Hiç nöbetçi kaydı yok.
+                        </div>
+                      ) : (
+                        duties.map(d => (
+                          <div key={d.id} className="bg-white/5 border border-white/5 p-3 rounded-xl flex items-center justify-between group">
+                             <div className="flex flex-col">
+                                <span className="text-[10px] font-black text-emerald-400">{d.TARİH}</span>
+                                <span className="text-[11px] text-slate-300 line-clamp-1">{d["BİNA İÇİ"]} | {d["BAHÇE"]}</span>
+                             </div>
+                             <button onClick={() => deleteDoc(doc(db, "duties", d.id!))} className="text-slate-600 hover:text-red-400 p-2 transition-colors">
+                                <Trash2 size={16} />
+                             </button>
+                          </div>
+                        ))
+                      )}
+                   </div>
+                </div>
+             </div>
+             
+             <div className="p-4 bg-blue-500/10 rounded-2xl border border-blue-500/20 flex gap-4 items-start">
+                <AlertTriangle className="text-blue-400 shrink-0 mt-0.5" size={18} />
+                <div className="text-[10px] text-blue-200 leading-relaxed">
+                   <strong>CSV Formatı Hakkında:</strong> Yükleyeceğiniz CSV dosyasının başlıkları tam olarak şöyle olmalıdır:<br/>
+                   <code className="bg-slate-900 px-1 py-0.5 rounded text-blue-400">TARİH, BİNA İÇİ, BAHÇE, NÖBETÇİ OKUL ÖNCESİ, NÖBETÇİ MÜDÜR YRD.</code>
+                </div>
+             </div>
+          </section>
+
           {/* Duyurular */}
           <section className="bg-slate-900/50 border border-white/5 rounded-3xl p-5 shadow-xl">
             <div className="flex items-center justify-between mb-6">
@@ -163,7 +370,6 @@ const AdminPanel: React.FC = () => {
               </button>
             </div>
 
-            {/* Yeni Punto Ayarı - Range artırıldı */}
             <div className="mb-8 p-4 bg-slate-950/40 rounded-2xl border border-white/5 space-y-4">
                <div className="flex items-center justify-between">
                   <h3 className="text-xs font-bold text-slate-400 flex items-center gap-2 uppercase tracking-widest">
@@ -212,7 +418,7 @@ const AdminPanel: React.FC = () => {
               </div>
             </div>
 
-            <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-800">
+            <div className="space-y-2 max-h-[240px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-800">
               <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-2 px-1">Aktif Duyurular ({announcements.length})</label>
               {announcements.length === 0 ? (
                 <div className="text-center py-8 text-slate-600 text-xs italic bg-white/2 p-4 rounded-2xl border border-dashed border-white/5">Henüz duyuru eklenmemiş.</div>

@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
-import { getBirthdays, getDuties, getEvents, parseDateStr } from '../services/dataService';
-import { BirthdayRow, EventRow } from '../types';
+import { getBirthdays, getEvents, parseDateStr } from '../services/dataService';
+import { BirthdayRow, EventRow, DutyRow } from '../types';
 import { Cake, Calendar, Megaphone, UserCheck, AlertCircle } from 'lucide-react';
 import { useConfig } from '../contexts/ConfigContext';
 
@@ -18,38 +18,40 @@ const ListContainer: React.FC<{ title: string; icon: React.ReactNode; children: 
 );
 
 export const DutyTeachers: React.FC = () => {
-  const [list, setList] = useState<{loc: string, name: string}[]>([]);
+  const { duties } = useConfig();
+  const [todayDuty, setTodayDuty] = useState<{loc: string, name: string}[]>([]);
 
   useEffect(() => {
-    getDuties().then(rows => {
-      const today = new Date();
-      
-      const found = rows.find(r => {
-        const d = parseDateStr(r.TARİH);
-        if (!d) return false;
-        return d.getDate() === today.getDate() &&
-               d.getMonth() === today.getMonth() &&
-               d.getFullYear() === today.getFullYear();
-      });
-
-      if (found) {
-        const entries: {loc: string, name: string}[] = [];
-        Object.keys(found).forEach(k => {
-          if (k !== 'TARİH' && found[k]) {
-            entries.push({ loc: k, name: found[k] });
-          }
-        });
-        setList(entries);
-      }
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const found = duties.find(r => {
+      const d = parseDateStr(r.TARİH);
+      if (!d) return false;
+      d.setHours(0, 0, 0, 0);
+      return d.getTime() === today.getTime();
     });
-  }, []);
+
+    if (found) {
+      const entries: {loc: string, name: string}[] = [];
+      const fields = ["BİNA İÇİ", "BAHÇE", "NÖBETÇİ OKUL ÖNCESİ", "NÖBETÇİ MÜDÜR YRD."];
+      fields.forEach(field => {
+        if (found[field]) {
+          entries.push({ loc: field, name: found[field] });
+        }
+      });
+      setTodayDuty(entries);
+    } else {
+      setTodayDuty([]);
+    }
+  }, [duties]);
 
   return (
     <ListContainer title="Nöbetçi Öğretmenler" icon={<UserCheck size={16} className="text-yellow-400" />}>
-      {list.length === 0 ? (
-          <div className="text-center text-xs text-slate-500 mt-4">Bugün için nöbetçi bilgisi girilmemiş.</div>
+      {todayDuty.length === 0 ? (
+          <div className="text-center text-xs text-slate-500 mt-4 italic">Bugün için nöbetçi bilgisi bulunamadı.</div>
       ) : (
-          list.map((item, i) => (
+          todayDuty.map((item, i) => (
             <div key={i} className="flex flex-col py-1.5 border-b border-slate-700/30 last:border-0">
                 <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wide mb-0.5">{item.loc}</span>
                 <span className="text-xs font-bold text-yellow-500/90">{item.name}</span>

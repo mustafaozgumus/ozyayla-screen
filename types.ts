@@ -12,8 +12,13 @@ export interface LessonRow {
 }
 
 export interface DutyRow {
+  id?: string;
   TARİH: string;
-  [key: string]: string; 
+  "BİNA İÇİ": string;
+  "BAHÇE": string;
+  "NÖBETÇİ OKUL ÖNCESİ": string;
+  "NÖBETÇİ MÜDÜR YRD.": string;
+  [key: string]: any; 
 }
 
 export interface BirthdayRow {
