@@ -95,32 +95,46 @@ export const getNews = async (): Promise<NewsItem[]> => {
   }
 };
 
-// Date helper
+/**
+ * Robust date parser for multiple formats
+ * Supports: YYYY.MM.DD, DD.MM.YYYY, YYYY-MM-DD, DD-MM-YYYY, DD/MM/YYYY etc.
+ */
 export const parseDateStr = (str: string): Date | null => {
   if (!str) return null;
   const s = str.trim();
+  
+  // Clean dots, dashes and slashes to a standard split
+  const parts = s.split(/[\.\-\/]/);
   const currentYear = new Date().getFullYear();
   
-  // Try YYYY-MM-DD
-  const direct = new Date(s);
-  if (!isNaN(direct.getTime())) return direct;
-
-  // Try DD.MM.YYYY or DD.MM (Turkish format)
-  const parts = s.split(/[\.\-\/]/);
-  
   if (parts.length === 3) {
-    // DD.MM.YYYY
-    if (parts[2].length === 4) {
-       return new Date(Number(parts[2]), Number(parts[1]) - 1, Number(parts[0]));
+    const p0 = parts[0].trim();
+    const p1 = parts[1].trim();
+    const p2 = parts[2].trim();
+
+    // Check if first part is a 4-digit year (YYYY.MM.DD)
+    if (p0.length === 4) {
+      const d = new Date(Number(p0), Number(p1) - 1, Number(p2));
+      return isNaN(d.getTime()) ? null : d;
     } 
-    // YYYY.MM.DD
-    else if (parts[0].length === 4) {
-       return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+    // Check if last part is a 4-digit year (DD.MM.YYYY)
+    else if (p2.length === 4) {
+      const d = new Date(Number(p2), Number(p1) - 1, Number(p0));
+      return isNaN(d.getTime()) ? null : d;
+    }
+    // Handle 2-digit years (DD.MM.YY) - Optional but safer
+    else if (p2.length === 2) {
+      const fullYear = Number(p2) > 50 ? 1900 + Number(p2) : 2000 + Number(p2);
+      const d = new Date(fullYear, Number(p1) - 1, Number(p0));
+      return isNaN(d.getTime()) ? null : d;
     }
   } else if (parts.length === 2) {
-    // DD.MM assumes current year
-    return new Date(currentYear, Number(parts[1]) - 1, Number(parts[0]));
+    // Format: DD.MM (Assumes current year)
+    const d = new Date(currentYear, Number(parts[1]) - 1, Number(parts[0]));
+    return isNaN(d.getTime()) ? null : d;
   }
   
-  return null;
+  // Last resort: standard JS Date parser
+  const fallback = new Date(s);
+  return isNaN(fallback.getTime()) ? null : fallback;
 };
