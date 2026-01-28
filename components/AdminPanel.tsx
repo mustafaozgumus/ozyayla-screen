@@ -3,7 +3,7 @@ import React, { useState, useRef } from 'react';
 import { useConfig } from '../contexts/ConfigContext';
 import { db } from '../services/firebase';
 import { doc, setDoc, collection, addDoc, deleteDoc, serverTimestamp, updateDoc, writeBatch, getDocs } from 'firebase/firestore';
-import { Save, Trash2, Plus, Monitor, Youtube, Megaphone, ArrowLeft, Layout, Sliders, Laptop, Settings, CheckCircle2, Type, School, UserCheck, Upload, FileText, AlertTriangle, Calendar as CalendarIcon, Loader2 } from 'lucide-react';
+import { Save, Trash2, Plus, Monitor, Youtube, Megaphone, ArrowLeft, Layout, Sliders, Laptop, Settings, CheckCircle2, Type, School, UserCheck, Upload, FileText, AlertTriangle, Calendar as CalendarIcon, Loader2, Edit2, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Papa from 'papaparse';
 import { DutyRow } from '../types';
@@ -19,6 +19,7 @@ const AdminPanel: React.FC = () => {
   const [layout, setLayout] = useState(settings.layout!);
 
   // Nöbetçi Form State
+  const [editingDutyId, setEditingDutyId] = useState<string | null>(null);
   const [newDuty, setNewDuty] = useState<Partial<DutyRow>>({
     TARİH: new Date().toISOString().split('T')[0],
     "BİNA İÇİ": "",
@@ -78,24 +79,61 @@ const AdminPanel: React.FC = () => {
     }
   };
 
-  const handleAddDuty = async () => {
+  const handleDutyAction = async () => {
     if (!newDuty.TARİH) return;
     try {
-      await addDoc(collection(db, "duties"), {
-        ...newDuty,
-        createdAt: serverTimestamp()
-      });
-      // Reset some fields but keep date or increment? Let's just reset fields.
-      setNewDuty(prev => ({
-        ...prev,
+      if (editingDutyId) {
+        // Update existing
+        const dutyRef = doc(db, "duties", editingDutyId);
+        await updateDoc(dutyRef, {
+          ...newDuty,
+          updatedAt: serverTimestamp()
+        });
+        setEditingDutyId(null);
+      } else {
+        // Add new
+        await addDoc(collection(db, "duties"), {
+          ...newDuty,
+          createdAt: serverTimestamp()
+        });
+      }
+      
+      // Reset fields
+      setNewDuty({
+        TARİH: new Date().toISOString().split('T')[0],
         "BİNA İÇİ": "",
         "BAHÇE": "",
         "NÖBETÇİ OKUL ÖNCESİ": "",
         "NÖBETÇİ MÜDÜR YRD.": ""
-      }));
+      });
     } catch (error) {
       console.error(error);
+      alert("İşlem sırasında bir hata oluştu.");
     }
+  };
+
+  const startEditDuty = (duty: DutyRow) => {
+    setEditingDutyId(duty.id!);
+    setNewDuty({
+      TARİH: duty.TARİH,
+      "BİNA İÇİ": duty["BİNA İÇİ"],
+      "BAHÇE": duty["BAHÇE"],
+      "NÖBETÇİ OKUL ÖNCESİ": duty["NÖBETÇİ OKUL ÖNCESİ"],
+      "NÖBETÇİ MÜDÜR YRD.": duty["NÖBETÇİ MÜDÜR YRD."]
+    });
+    // Scroll to form on mobile/small screens
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const cancelEdit = () => {
+    setEditingDutyId(null);
+    setNewDuty({
+      TARİH: new Date().toISOString().split('T')[0],
+      "BİNA İÇİ": "",
+      "BAHÇE": "",
+      "NÖBETÇİ OKUL ÖNCESİ": "",
+      "NÖBETÇİ MÜDÜR YRD.": ""
+    });
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -151,6 +189,7 @@ const AdminPanel: React.FC = () => {
         batch.delete(d.ref);
       });
       await batch.commit();
+      cancelEdit();
     } catch (error) {
       console.error(error);
     } finally {
@@ -242,7 +281,7 @@ const AdminPanel: React.FC = () => {
         {/* Orta & Sağ Kolon: İçerik Yönetimi */}
         <div className="lg:col-span-8 space-y-6">
           
-          {/* Nöbetçi Yönetimi - YENİ */}
+          {/* Nöbetçi Yönetimi */}
           <section className="bg-slate-900/50 border border-white/5 rounded-3xl p-5 shadow-xl">
              <div className="flex items-center justify-between mb-6">
                 <h2 className="text-sm font-bold flex items-center gap-2 text-emerald-400 uppercase tracking-wider">
@@ -273,9 +312,17 @@ const AdminPanel: React.FC = () => {
              </div>
 
              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <div className="space-y-4 bg-slate-950/40 p-4 rounded-2xl border border-white/5">
-                   <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 flex items-center gap-2">
-                      <Plus size={14} /> Manuel Kayıt Ekle
+                <div className={`space-y-4 bg-slate-950/40 p-4 rounded-2xl border transition-colors ${editingDutyId ? 'border-emerald-500/40 bg-emerald-500/5' : 'border-white/5'}`}>
+                   <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        {editingDutyId ? <Edit2 size={14} className="text-emerald-400" /> : <Plus size={14} />}
+                        {editingDutyId ? 'Kaydı Düzenle' : 'Manuel Kayıt Ekle'}
+                      </div>
+                      {editingDutyId && (
+                        <button onClick={cancelEdit} className="text-red-400 hover:text-red-300 flex items-center gap-1">
+                          <X size={12} /> Vazgeç
+                        </button>
+                      )}
                    </h3>
                    <div className="grid grid-cols-1 gap-3">
                       <div className="flex flex-col gap-1">
@@ -312,10 +359,10 @@ const AdminPanel: React.FC = () => {
                         className="bg-slate-900 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-emerald-500" 
                       />
                       <button 
-                        onClick={handleAddDuty}
-                        className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-emerald-900/20 text-xs"
+                        onClick={handleDutyAction}
+                        className={`${editingDutyId ? 'bg-emerald-500' : 'bg-emerald-600'} hover:bg-emerald-400 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-emerald-900/20 text-xs uppercase`}
                       >
-                        KAYDI EKLE
+                        {editingDutyId ? 'KAYDI GÜNCELLE' : 'KAYDI EKLE'}
                       </button>
                    </div>
                 </div>
@@ -331,18 +378,28 @@ const AdminPanel: React.FC = () => {
                         </div>
                       ) : (
                         duties.map(d => (
-                          <div key={d.id} className="bg-white/5 border border-white/5 p-3 rounded-xl flex items-center justify-between group">
+                          <div 
+                            key={d.id} 
+                            onClick={() => startEditDuty(d)}
+                            className={`bg-white/5 border p-3 rounded-xl flex items-center justify-between group cursor-pointer transition-all hover:bg-white/10 ${editingDutyId === d.id ? 'border-emerald-500/50 bg-emerald-500/10' : 'border-white/5'}`}
+                          >
                              <div className="flex flex-col">
                                 <span className="text-[10px] font-black text-emerald-400">{d.TARİH}</span>
                                 <span className="text-[11px] text-slate-300 line-clamp-1">{d["BİNA İÇİ"]} | {d["BAHÇE"]}</span>
                              </div>
-                             <button onClick={() => deleteDoc(doc(db, "duties", d.id!))} className="text-slate-600 hover:text-red-400 p-2 transition-colors">
-                                <Trash2 size={16} />
-                             </button>
+                             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                               <button 
+                                 onClick={(e) => { e.stopPropagation(); deleteDoc(doc(db, "duties", d.id!)); if(editingDutyId === d.id) cancelEdit(); }} 
+                                 className="text-slate-500 hover:text-red-400 p-2 transition-colors"
+                               >
+                                  <Trash2 size={16} />
+                               </button>
+                             </div>
                           </div>
                         ))
                       )}
                    </div>
+                   <p className="text-[9px] text-slate-600 text-center mt-1 italic">Düzenlemek için bir kayda tıklayın.</p>
                 </div>
              </div>
              
