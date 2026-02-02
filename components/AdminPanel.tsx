@@ -3,7 +3,7 @@ import React, { useState, useRef } from 'react';
 import { useConfig } from '../contexts/ConfigContext';
 import { db } from '../services/firebase';
 import { doc, setDoc, collection, addDoc, deleteDoc, serverTimestamp, updateDoc, writeBatch, getDocs } from 'firebase/firestore';
-import { Save, Trash2, Plus, Monitor, Youtube, Megaphone, ArrowLeft, Layout, Sliders, Laptop, Settings, CheckCircle2, Type, School, UserCheck, Upload, FileText, AlertTriangle, Calendar as CalendarIcon, Loader2, Edit2, X } from 'lucide-react';
+import { Save, Trash2, Plus, Monitor, Youtube, Megaphone, ArrowLeft, Layout, Sliders, Laptop, Settings, CheckCircle2, Type, School, UserCheck, Upload, FileText, AlertTriangle, Calendar as CalendarIcon, Loader2, Edit2, X, Image as ImageIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Papa from 'papaparse';
 import { DutyRow } from '../types';
@@ -12,8 +12,9 @@ const AdminPanel: React.FC = () => {
   const { settings, announcements, duties } = useConfig();
   
   const [schoolName, setSchoolName] = useState(settings.schoolName);
-  const [mode, setMode] = useState<'info' | 'video'>(settings.mode);
+  const [mode, setMode] = useState<'info' | 'video' | 'image'>(settings.mode);
   const [youtubeUrl, setYoutubeUrl] = useState(settings.youtubeUrl);
+  const [imageUrl, setImageUrl] = useState(settings.imageUrl || "");
   const [academicYear, setAcademicYear] = useState(settings.academicYear);
   const [showAnnouncements, setShowAnnouncements] = useState(settings.showAnnouncements);
   const [layout, setLayout] = useState(settings.layout!);
@@ -34,11 +35,13 @@ const AdminPanel: React.FC = () => {
   const [uploading, setUploading] = useState(false);
   const [success, setSuccess] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const imageUploadRef = useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
     setSchoolName(settings.schoolName);
     setMode(settings.mode);
     setYoutubeUrl(settings.youtubeUrl);
+    setImageUrl(settings.imageUrl || "");
     setAcademicYear(settings.academicYear);
     setShowAnnouncements(settings.showAnnouncements);
     if (settings.layout) setLayout(settings.layout);
@@ -51,6 +54,7 @@ const AdminPanel: React.FC = () => {
         schoolName,
         mode,
         youtubeUrl: youtubeUrl.trim(),
+        imageUrl: imageUrl.trim(),
         academicYear,
         showAnnouncements,
         layout
@@ -121,7 +125,6 @@ const AdminPanel: React.FC = () => {
       "NÖBETÇİ OKUL ÖNCESİ": duty["NÖBETÇİ OKUL ÖNCESİ"],
       "NÖBETÇİ MÜDÜR YRD.": duty["NÖBETÇİ MÜDÜR YRD."]
     });
-    // Scroll to form on mobile/small screens
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -176,6 +179,23 @@ const AdminPanel: React.FC = () => {
         setUploading(false);
       }
     });
+  };
+
+  const handleLocalImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    if (file.size > 1024 * 1024) {
+      alert("Resim dosyası 1MB'dan küçük olmalıdır (Firestore limiti). Daha büyük dosyalar için lütfen bir link kullanın.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        const base64 = event.target?.result as string;
+        setImageUrl(base64);
+    };
+    reader.readAsDataURL(file);
   };
 
   const clearAllDuties = async () => {
@@ -248,20 +268,51 @@ const AdminPanel: React.FC = () => {
             <h2 className="text-sm font-bold flex items-center gap-2 text-slate-400 uppercase tracking-wider">
               <Monitor size={18} className="text-purple-400" /> Ekran Modu
             </h2>
-            <div className="grid grid-cols-2 gap-3">
-              <button onClick={() => setMode('info')} className={`flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all ${mode === 'info' ? 'border-blue-500 bg-blue-500/10 text-white' : 'border-slate-800 text-slate-500 hover:border-slate-700'}`}>
-                <Layout size={20} />
-                <span className="text-xs font-bold">Bilgi</span>
+            <div className="grid grid-cols-3 gap-2">
+              <button onClick={() => setMode('info')} className={`flex flex-col items-center gap-2 p-3 rounded-2xl border-2 transition-all ${mode === 'info' ? 'border-blue-500 bg-blue-500/10 text-white' : 'border-slate-800 text-slate-500 hover:border-slate-700'}`}>
+                <Layout size={18} />
+                <span className="text-[10px] font-bold">Bilgi</span>
               </button>
-              <button onClick={() => setMode('video')} className={`flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all ${mode === 'video' ? 'border-purple-500 bg-purple-500/10 text-white' : 'border-slate-800 text-slate-500 hover:border-slate-700'}`}>
-                <Youtube size={20} />
-                <span className="text-xs font-bold">Video</span>
+              <button onClick={() => setMode('video')} className={`flex flex-col items-center gap-2 p-3 rounded-2xl border-2 transition-all ${mode === 'video' ? 'border-purple-500 bg-purple-500/10 text-white' : 'border-slate-800 text-slate-500 hover:border-slate-700'}`}>
+                <Youtube size={18} />
+                <span className="text-[10px] font-bold">Video</span>
+              </button>
+              <button onClick={() => setMode('image')} className={`flex flex-col items-center gap-2 p-3 rounded-2xl border-2 transition-all ${mode === 'image' ? 'border-emerald-500 bg-emerald-500/10 text-white' : 'border-slate-800 text-slate-500 hover:border-slate-700'}`}>
+                <ImageIcon size={18} />
+                <span className="text-[10px] font-bold">Resim</span>
               </button>
             </div>
+
             {mode === 'video' && (
-              <div className="space-y-2">
+              <div className="space-y-2 animate-in slide-in-from-top duration-300">
                 <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">YouTube Video Linki</label>
                 <input type="text" value={youtubeUrl} onChange={(e) => setYoutubeUrl(e.target.value)} className="w-full bg-slate-950/50 border border-white/5 rounded-xl px-4 py-4 text-sm focus:ring-1 focus:ring-purple-500 outline-none" placeholder="https://youtube.com/..." />
+              </div>
+            )}
+
+            {mode === 'image' && (
+              <div className="space-y-4 animate-in slide-in-from-top duration-300">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Resim Bağlantısı (URL)</label>
+                  <input type="text" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} className="w-full bg-slate-950/50 border border-white/5 rounded-xl px-4 py-4 text-sm focus:ring-1 focus:ring-emerald-500 outline-none" placeholder="https://site.com/resim.jpg" />
+                </div>
+                
+                <div className="relative">
+                   <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-white/5"></span></div>
+                   <div className="relative flex justify-center text-[9px] uppercase font-bold text-slate-600"><span className="bg-slate-900 px-2">Veya Dosya Yükle</span></div>
+                </div>
+
+                <input type="file" accept="image/*" className="hidden" ref={imageUploadRef} onChange={handleLocalImageUpload} />
+                <button onClick={() => imageUploadRef.current?.click()} className="w-full py-3 bg-white/5 border border-white/10 rounded-xl text-xs font-bold hover:bg-white/10 transition-all flex items-center justify-center gap-2">
+                  <Upload size={14} /> Bilgisayardan Seç
+                </button>
+                
+                {imageUrl && (
+                  <div className="mt-2 relative group rounded-xl overflow-hidden border border-white/10 bg-black aspect-video">
+                     <img src={imageUrl} className="w-full h-full object-contain" alt="Önizleme" />
+                     <button onClick={() => setImageUrl("")} className="absolute top-2 right-2 bg-red-500 p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"><X size={14}/></button>
+                  </div>
+                )}
               </div>
             )}
           </section>
@@ -402,14 +453,6 @@ const AdminPanel: React.FC = () => {
                    <p className="text-[9px] text-slate-600 text-center mt-1 italic">Düzenlemek için bir kayda tıklayın.</p>
                 </div>
              </div>
-             
-             <div className="p-4 bg-blue-500/10 rounded-2xl border border-blue-500/20 flex gap-4 items-start">
-                <AlertTriangle className="text-blue-400 shrink-0 mt-0.5" size={18} />
-                <div className="text-[10px] text-blue-200 leading-relaxed">
-                   <strong>CSV Formatı Hakkında:</strong> Yükleyeceğiniz CSV dosyasının başlıkları tam olarak şöyle olmalıdır:<br/>
-                   <code className="bg-slate-900 px-1 py-0.5 rounded text-blue-400">TARİH, BİNA İÇİ, BAHÇE, NÖBETÇİ OKUL ÖNCESİ, NÖBETÇİ MÜDÜR YRD.</code>
-                </div>
-             </div>
           </section>
 
           {/* Duyurular */}
@@ -443,11 +486,6 @@ const AdminPanel: React.FC = () => {
                   onChange={(e) => updateLayout('announcementFontSize', parseInt(e.target.value))} 
                   className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-blue-500" 
                />
-               <div className="flex justify-between text-[10px] text-slate-500 font-bold uppercase">
-                  <span>Küçük</span>
-                  <span>Normal</span>
-                  <span>Çok Büyük (TV)</span>
-               </div>
             </div>
 
             <div className="flex flex-col gap-3 mb-6">
@@ -476,53 +514,14 @@ const AdminPanel: React.FC = () => {
             </div>
 
             <div className="space-y-2 max-h-[240px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-800">
-              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-2 px-1">Aktif Duyurular ({announcements.length})</label>
-              {announcements.length === 0 ? (
-                <div className="text-center py-8 text-slate-600 text-xs italic bg-white/2 p-4 rounded-2xl border border-dashed border-white/5">Henüz duyuru eklenmemiş.</div>
-              ) : (
-                announcements.map(item => (
-                  <div key={item.id} className="flex items-center justify-between bg-white/5 p-4 rounded-2xl border border-white/5 group hover:bg-white/10 transition-colors">
-                    <span className="text-base pr-4" style={{ color: item.important ? '#f87171' : '#e2e8f0', fontWeight: item.important ? 'bold' : 'normal' }}>{item.title}</span>
-                    <button onClick={() => deleteDoc(doc(db, "announcements", item.id))} className="text-slate-600 hover:text-red-400 p-2 shrink-0 transition-colors">
-                      <Trash2 size={18} />
-                    </button>
-                  </div>
-                ))
-              )}
-            </div>
-          </section>
-
-          {/* Yerleşim Ayarları */}
-          <section className="bg-slate-900/50 border border-white/5 rounded-3xl p-5">
-            <h2 className="text-sm font-bold flex items-center gap-2 text-slate-400 uppercase tracking-wider mb-8">
-              <Sliders size={18} className="text-emerald-400" /> Görünüm Ayarları (%)
-            </h2>
-            
-            <div className="space-y-8">
-              <div className="space-y-3">
-                <div className="flex justify-between text-xs font-bold px-1">
-                  <span className="text-slate-300">Haberler & Ders Programı</span>
-                  <span className="text-emerald-400">{layout.newsHeight}%</span>
+              {announcements.map(item => (
+                <div key={item.id} className="flex items-center justify-between bg-white/5 p-4 rounded-2xl border border-white/5 group hover:bg-white/10 transition-colors">
+                  <span className="text-base pr-4" style={{ color: item.important ? '#f87171' : '#e2e8f0', fontWeight: item.important ? 'bold' : 'normal' }}>{item.title}</span>
+                  <button onClick={() => deleteDoc(doc(db, "announcements", item.id))} className="text-slate-600 hover:text-red-400 p-2 shrink-0 transition-colors">
+                    <Trash2 size={18} />
+                  </button>
                 </div>
-                <input type="range" min="20" max="60" value={layout.newsHeight} onChange={(e) => updateLayout('newsHeight', parseInt(e.target.value))} className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500" />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="space-y-3">
-                  <div className="flex justify-between text-xs font-bold px-1">
-                    <span className="text-slate-300">Hava Durumu</span>
-                    <span className="text-emerald-400">{layout.weatherHeight}%</span>
-                  </div>
-                  <input type="range" min="10" max="40" value={layout.weatherHeight} onChange={(e) => updateLayout('weatherHeight', parseInt(e.target.value))} className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500" />
-                </div>
-                <div className="space-y-3">
-                  <div className="flex justify-between text-xs font-bold px-1">
-                    <span className="text-slate-300">Saat & Zil</span>
-                    <span className="text-emerald-400">{layout.clockHeight}%</span>
-                  </div>
-                  <input type="range" min="30" max="60" value={layout.clockHeight} onChange={(e) => updateLayout('clockHeight', parseInt(e.target.value))} className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500" />
-                </div>
-              </div>
+              ))}
             </div>
           </section>
         </div>

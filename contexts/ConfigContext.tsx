@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { db } from '../services/firebase';
 import { AppSettings, ManualAnnouncement, LayoutSettings, DutyRow } from '../types';
-import { doc, onSnapshot, collection, query, orderBy, QuerySnapshot, DocumentData } from 'firebase/firestore';
+import { doc, onSnapshot, collection, query, orderBy } from 'firebase/firestore';
 
 interface ConfigContextType {
   settings: AppSettings;
@@ -25,6 +25,7 @@ const defaultSettings: AppSettings = {
   schoolName: 'Özyayla İlk ve Şehit Hüseyin İpek Ortaokulu',
   mode: 'info',
   youtubeUrl: 'https://www.youtube.com/watch?v=jfKfPfyJRdk',
+  imageUrl: '',
   academicYear: '2025 - 2026',
   showAnnouncements: true,
   layout: defaultLayout

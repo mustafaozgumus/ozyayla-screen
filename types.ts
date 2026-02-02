@@ -80,8 +80,9 @@ export interface LayoutSettings {
 
 export interface AppSettings {
   schoolName: string;
-  mode: 'info' | 'video';
+  mode: 'info' | 'video' | 'image';
   youtubeUrl: string;
+  imageUrl?: string;
   academicYear: string;
   showAnnouncements: boolean;
   layout?: LayoutSettings;
