@@ -8,6 +8,9 @@ const ImageDisplay: React.FC = () => {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  // Get current image scale from settings, default to 100
+  const imageScale = settings.layout?.imageScale || 100;
+
   if (!settings.imageUrl) {
     return (
       <div className="w-screen h-screen bg-slate-950 flex flex-col items-center justify-center text-slate-500 gap-6 p-10 text-center">
@@ -42,16 +45,24 @@ const ImageDisplay: React.FC = () => {
           <a href="/#/admin" className="text-white bg-red-500/20 border border-red-500/30 px-4 py-2 rounded-xl text-xs font-bold uppercase">Düzenle</a>
         </div>
       ) : (
-        <img 
-          src={settings.imageUrl} 
-          alt="Okul Ekran Görseli" 
-          className={`max-w-full max-h-full object-contain transition-opacity duration-1000 ${loading ? 'opacity-0' : 'opacity-100'}`}
-          onLoad={() => setLoading(false)}
-          onError={() => {
-            setError(true);
-            setLoading(false);
+        <div 
+          className="flex items-center justify-center w-full h-full transition-all duration-700"
+          style={{ 
+            transform: `scale(${imageScale / 100})`,
+            transformOrigin: 'center center' 
           }}
-        />
+        >
+          <img 
+            src={settings.imageUrl} 
+            alt="Okul Ekran Görseli" 
+            className={`max-w-full max-h-full object-contain transition-opacity duration-1000 ${loading ? 'opacity-0' : 'opacity-100'}`}
+            onLoad={() => setLoading(false)}
+            onError={() => {
+              setError(true);
+              setLoading(false);
+            }}
+          />
+        </div>
       )}
     </div>
   );

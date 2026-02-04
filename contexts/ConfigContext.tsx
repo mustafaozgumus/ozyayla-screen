@@ -18,7 +18,8 @@ const defaultLayout: LayoutSettings = {
   dutyHeight: 50,
   announceHeight: 30,
   dashboardZoom: 85,
-  announcementFontSize: 14
+  announcementFontSize: 14,
+  imageScale: 100
 };
 
 const defaultSettings: AppSettings = {

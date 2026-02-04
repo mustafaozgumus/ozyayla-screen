@@ -3,7 +3,7 @@ import React, { useState, useRef } from 'react';
 import { useConfig } from '../contexts/ConfigContext';
 import { db } from '../services/firebase';
 import { doc, setDoc, collection, addDoc, deleteDoc, serverTimestamp, updateDoc, writeBatch, getDocs } from 'firebase/firestore';
-import { Save, Trash2, Plus, Monitor, Youtube, Megaphone, ArrowLeft, Layout, Sliders, Laptop, Settings, CheckCircle2, Type, School, UserCheck, Upload, FileText, AlertTriangle, Calendar as CalendarIcon, Loader2, Edit2, X, Image as ImageIcon } from 'lucide-react';
+import { Save, Trash2, Plus, Monitor, Youtube, Megaphone, ArrowLeft, Layout, Sliders, Laptop, Settings, CheckCircle2, Type, School, UserCheck, Upload, FileText, AlertTriangle, Calendar as CalendarIcon, Loader2, Edit2, X, Image as ImageIcon, ZoomIn } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Papa from 'papaparse';
 import { DutyRow } from '../types';
@@ -313,6 +313,26 @@ const AdminPanel: React.FC = () => {
                      <button onClick={() => setImageUrl("")} className="absolute top-2 right-2 bg-red-500 p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"><X size={14}/></button>
                   </div>
                 )}
+
+                <hr className="border-white/5" />
+                
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+                      <ZoomIn size={14} className="text-emerald-400" /> Resim Ölçeği
+                    </label>
+                    <span className="text-emerald-400 font-bold text-xs">%{layout.imageScale || 100}</span>
+                  </div>
+                  <input 
+                    type="range" 
+                    min="10" 
+                    max="200" 
+                    value={layout.imageScale || 100} 
+                    onChange={(e) => updateLayout('imageScale', parseInt(e.target.value))} 
+                    className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500" 
+                  />
+                  <p className="text-[9px] text-slate-500 italic">Resmin ekrandaki boyutunu ayarlayın.</p>
+                </div>
               </div>
             )}
           </section>
@@ -320,7 +340,7 @@ const AdminPanel: React.FC = () => {
           <section className="bg-slate-900/50 border border-white/5 rounded-3xl p-5">
              <div className="flex items-center justify-between mb-6">
                 <h2 className="text-sm font-bold flex items-center gap-2 text-slate-400 uppercase tracking-wider">
-                  <Laptop size={18} className="text-blue-400" /> Ekran Ölçeği
+                  <Laptop size={18} className="text-blue-400" /> Bilgi Ekranı Ölçeği
                 </h2>
                 <span className="text-blue-400 font-bold text-sm">{layout.dashboardZoom}%</span>
              </div>

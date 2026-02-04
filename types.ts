@@ -76,6 +76,7 @@ export interface LayoutSettings {
   announceHeight: number;
   dashboardZoom: number;
   announcementFontSize: number;
+  imageScale: number;
 }
 
 export interface AppSettings {
