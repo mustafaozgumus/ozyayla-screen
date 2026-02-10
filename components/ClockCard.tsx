@@ -182,7 +182,7 @@ const ClockCard: React.FC = () => {
                 <Moon size={22} className="text-yellow-300 fill-yellow-300" />
              </div>
              <div className="flex flex-col">
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-70">Mesai Bitti</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-70">Bugünlük Bu Kadar</span>
                 <span className="text-sm font-bold tracking-wide">İyi Dinlenmeler!</span>
              </div>
           </div>

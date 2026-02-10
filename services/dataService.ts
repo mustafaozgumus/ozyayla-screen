@@ -80,8 +80,11 @@ export const getNews = async (): Promise<NewsItem[]> => {
              link = URLs.NEWS_BASE + link;
         }
 
+        // Fix for truncated titles: use 'alt' or 'title' attributes if available
+        const fullTitle = img.getAttribute("alt") || a.getAttribute("title") || p?.textContent?.trim() || "Haber";
+
         news.push({
-          title: p ? p.textContent?.trim() || "Haber" : "Haber",
+          title: fullTitle,
           img: imgSrc,
           link: link
         });
