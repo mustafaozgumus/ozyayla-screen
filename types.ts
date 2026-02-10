@@ -1,4 +1,5 @@
 
+
 export interface LessonRow {
   GÜN: string;
   SINIF: string;
@@ -32,40 +33,11 @@ export interface EventRow {
   TARİH: string;
 }
 
-export interface NewsItem {
-  title: string;
-  img: string;
-  link: string;
-}
-
 export interface ManualAnnouncement {
   id: string; 
   title: string;
   important: boolean;
   createdAt?: any;
-}
-
-export interface WeatherData {
-  current_weather: {
-    temperature: number;
-    windspeed: number;
-    weathercode: number;
-  };
-  hourly: {
-    time: string[];
-    temperature_2m: number[];
-    weathercode: number[];
-  };
-}
-
-export type LessonStatusType = 'before' | 'after' | 'class' | 'break';
-
-export interface LessonStatus {
-  label: string;
-  type: LessonStatusType;
-  dersNo?: number;
-  isAlert: boolean;
-  nextBellTime: Date | null;
 }
 
 export interface LayoutSettings {
@@ -77,6 +49,7 @@ export interface LayoutSettings {
   dashboardZoom: number;
   announcementFontSize: number;
   imageScale: number;
+  dutyRowHeight: number;
 }
 
 export interface AppSettings {
@@ -86,5 +59,40 @@ export interface AppSettings {
   imageUrl?: string;
   academicYear: string;
   showAnnouncements: boolean;
+  examDate?: string;
+  lgsDate?: string;
   layout?: LayoutSettings;
+  bellTimes?: string[];
+}
+
+// Added WeatherData interface for open-meteo API response
+export interface WeatherData {
+  current_weather: {
+    temperature: number;
+    windspeed: number;
+    weathercode: number;
+    time: string;
+  };
+  hourly: {
+    time: string[];
+    temperature_2m: number[];
+    weathercode: number[];
+  };
+}
+
+// Added NewsItem interface for school website news
+export interface NewsItem {
+  title: string;
+  img: string;
+  link: string;
+}
+
+// Added LessonStatus interface for school bell schedule calculations
+export interface LessonStatus {
+  type: 'class' | 'break' | 'before' | 'after';
+  label: string;
+  dersNo: number;
+  isAlert: boolean;
+  nextBellTime: Date | null;
+  progress: number;
 }

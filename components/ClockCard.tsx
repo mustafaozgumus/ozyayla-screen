@@ -14,9 +14,12 @@ const fridayBellTimes = [
   "11:40","12:20", "13:15","13:55", "14:05","14:45", "14:55","15:35"
 ];
 
-const calculateStatus = (now: Date) => {
+const calculateStatus = (now: Date, customBellTimes?: string[]) => {
   const isFriday = now.getDay() === 5;
-  const bellTimes = isFriday ? fridayBellTimes : weekdayBellTimes;
+  // Use admin provided bell times if available, otherwise use defaults
+  const bellTimes = (customBellTimes && customBellTimes.length >= 14) 
+    ? customBellTimes 
+    : (isFriday ? fridayBellTimes : weekdayBellTimes);
 
   const times = bellTimes.map(t => {
     const [h, m] = t.split(':').map(Number);
@@ -27,8 +30,8 @@ const calculateStatus = (now: Date) => {
 
   const nextBell = times.find(t => t > now) || null;
   let lastBell = null;
-  
   let lastIndex = -1;
+
   times.forEach((t, i) => {
     if (t <= now) {
         lastIndex = i;
@@ -47,7 +50,7 @@ const calculateStatus = (now: Date) => {
   } else if (lastIndex === times.length - 1 && (!nextBell)) {
     label = "Dersler Bitti";
     type = 'after';
-  } else if (lastIndex === 9 && isFriday) {
+  } else if (lastIndex === 9 && isFriday && !customBellTimes) {
     label = "Öğle Arası";
     type = 'break';
   } else if (lastIndex % 2 === 0) {
@@ -83,10 +86,10 @@ const ClockCard: React.FC = () => {
     const timer = setInterval(() => {
       const now = new Date();
       setTime(now);
-      setStatus(calculateStatus(now));
+      setStatus(calculateStatus(now, settings.bellTimes));
     }, 1000);
     return () => clearInterval(timer);
-  }, []);
+  }, [settings.bellTimes]);
 
   if (!status) return null;
 
@@ -110,7 +113,6 @@ const ClockCard: React.FC = () => {
   return (
     <div className={`glass-panel relative flex flex-col h-full rounded-[2.5rem] p-6 overflow-hidden transition-all duration-500 border-2 ${status.isAlert ? 'border-red-500/50 bg-red-950/20 shadow-[0_0_50px_rgba(239,68,68,0.15)]' : 'border-white/5'}`}>
       
-      {/* İlerleme Çubuğu */}
       <div className="absolute top-0 left-0 w-full h-1.5 bg-white/5 overflow-hidden">
         <div 
           className={`h-full transition-all duration-1000 ease-linear ${status.isAlert ? 'bg-red-500 shadow-[0_0_10px_#ef4444]' : 'bg-brand-primary shadow-[0_0_10px_#3b82f6]'}`}
@@ -118,7 +120,6 @@ const ClockCard: React.FC = () => {
         />
       </div>
 
-      {/* Üst Bilgi */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex flex-col">
           <div className="flex items-center gap-2 text-slate-500 mb-0.5">
@@ -136,7 +137,6 @@ const ClockCard: React.FC = () => {
         </div>
       </div>
 
-      {/* Saat */}
       <div className="flex-1 flex flex-col items-center justify-center">
         <div className="relative group">
           <div className="text-6xl font-black tracking-tighter tabular-nums text-white drop-shadow-2xl flex items-baseline">
@@ -161,7 +161,6 @@ const ClockCard: React.FC = () => {
         </div>
       </div>
 
-      {/* Alt Geri Sayım Kutusu */}
       <div className="mt-6">
         {status.nextBellTime ? (
           <div className="bg-slate-950/60 backdrop-blur-xl rounded-[2rem] p-4 flex items-center justify-between border border-white/5 shadow-inner">
