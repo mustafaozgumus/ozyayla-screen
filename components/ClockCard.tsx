@@ -48,7 +48,6 @@ const calculateStatus = (now: Date) => {
     label = "Dersler Bitti";
     type = 'after';
   } else if (lastIndex === 9 && isFriday) {
-    // Özel cuma öğle arası tespiti veya standart mola
     label = "Öğle Arası";
     type = 'break';
   } else if (lastIndex % 2 === 0) {
@@ -100,91 +99,91 @@ const ClockCard: React.FC = () => {
 
   const getStatusIcon = () => {
     switch (status.type) {
-      case 'class': return <BookOpen className="text-brand-primary" size={24} />;
-      case 'break': return <Coffee className="text-orange-500" size={24} />;
-      case 'before': return <Sunrise className="text-blue-500" size={24} />;
-      case 'after': return <Moon className="text-slate-400" size={24} />;
-      default: return <Clock size={24} />;
+      case 'class': return <BookOpen className="text-brand-primary" size={22} />;
+      case 'break': return <Coffee className="text-orange-400" size={22} />;
+      case 'before': return <Sunrise className="text-blue-400" size={22} />;
+      case 'after': return <Moon className="text-slate-500" size={22} />;
+      default: return <Clock size={22} />;
     }
   };
 
   return (
-    <div className={`glass-panel relative flex flex-col h-full rounded-[2.5rem] p-6 overflow-hidden transition-all duration-500 border-2 ${status.isAlert ? 'border-red-400/50 bg-red-50/20' : 'border-white/60'}`}>
+    <div className={`glass-panel relative flex flex-col h-full rounded-[2.5rem] p-6 overflow-hidden transition-all duration-500 border-2 ${status.isAlert ? 'border-red-500/50 bg-red-950/20 shadow-[0_0_50px_rgba(239,68,68,0.15)]' : 'border-white/5'}`}>
       
-      {/* İlerleme Çubuğu - Üstte İnce Bir Çizgi */}
-      <div className="absolute top-0 left-0 w-full h-1.5 bg-black/5 overflow-hidden">
+      {/* İlerleme Çubuğu */}
+      <div className="absolute top-0 left-0 w-full h-1.5 bg-white/5 overflow-hidden">
         <div 
-          className={`h-full transition-all duration-1000 ease-linear ${status.isAlert ? 'bg-red-500' : 'bg-brand-primary'}`}
+          className={`h-full transition-all duration-1000 ease-linear ${status.isAlert ? 'bg-red-500 shadow-[0_0_10px_#ef4444]' : 'bg-brand-primary shadow-[0_0_10px_#3b82f6]'}`}
           style={{ width: `${status.progress}%` }}
         />
       </div>
 
-      {/* Tarih ve Takvim Bloğu */}
+      {/* Üst Bilgi */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex flex-col">
-          <div className="flex items-center gap-2 text-slate-400 mb-0.5">
-            <Calendar size={14} className="opacity-60" />
+          <div className="flex items-center gap-2 text-slate-500 mb-0.5">
+            <Calendar size={12} className="opacity-60" />
             <span className="text-[10px] font-black uppercase tracking-[0.2em]">
               {time.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long' })}
             </span>
           </div>
-          <span className="text-xs font-bold text-slate-600 uppercase tracking-widest">
+          <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
             {time.toLocaleDateString('tr-TR', { weekday: 'long' })}
           </span>
         </div>
-        <div className="w-12 h-12 rounded-2xl bg-white/60 shadow-inner flex items-center justify-center border border-white/80">
+        <div className="w-11 h-11 rounded-2xl bg-slate-900/60 shadow-inner flex items-center justify-center border border-white/5">
           {getStatusIcon()}
         </div>
       </div>
 
-      {/* Ana Zaman Göstergesi */}
+      {/* Saat */}
       <div className="flex-1 flex flex-col items-center justify-center">
         <div className="relative group">
-          <div className="text-6xl font-black tracking-tighter tabular-nums text-slate-900 drop-shadow-sm flex items-baseline">
+          <div className="text-6xl font-black tracking-tighter tabular-nums text-white drop-shadow-2xl flex items-baseline">
             {time.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}
-            <span className="text-2xl text-brand-primary/40 ml-1 font-bold animate-pulse">:</span>
-            <span className="text-2xl text-slate-400 font-bold">
+            <span className="text-2xl text-brand-primary/60 ml-1 font-bold animate-pulse">:</span>
+            <span className="text-2xl text-slate-500 font-bold">
               {time.toLocaleTimeString('tr-TR', { second: '2-digit' })}
             </span>
           </div>
-          <div className={`absolute inset-0 blur-2xl opacity-10 -z-10 transition-colors ${status.isAlert ? 'bg-red-500' : 'bg-brand-primary'}`}></div>
+          <div className={`absolute inset-0 blur-3xl opacity-20 -z-10 transition-colors duration-1000 ${status.isAlert ? 'bg-red-600' : 'bg-brand-primary'}`}></div>
         </div>
 
-        <div className={`mt-4 px-6 py-2 rounded-full flex items-center gap-3 border transition-all duration-500 ${
+        <div className={`mt-5 px-6 py-2 rounded-full flex items-center gap-3 border transition-all duration-500 ${
             status.isAlert 
-            ? 'bg-red-500 text-white border-red-400 shadow-xl shadow-red-500/20 animate-bounce' 
-            : 'bg-brand-primary/10 text-brand-dark border-brand-primary/20 shadow-sm'
+            ? 'bg-red-600 text-white border-red-500 shadow-xl shadow-red-900/40 animate-bounce' 
+            : 'bg-brand-primary/10 text-brand-primary border-brand-primary/20 shadow-sm'
         }`}>
             <Bell size={14} className={status.type === 'class' ? 'animate-ring' : ''} />
-            <span className="text-[12px] font-black uppercase tracking-[0.2em] leading-none">
+            <span className="text-[11px] font-black uppercase tracking-[0.2em] leading-none">
                 {status.label}
             </span>
         </div>
       </div>
 
-      {/* Alt Bilgi Alanı: Geri Sayım veya Mesaj */}
+      {/* Alt Geri Sayım Kutusu */}
       <div className="mt-6">
         {status.nextBellTime ? (
-          <div className="bg-white/40 backdrop-blur-md rounded-[2rem] p-4 flex items-center justify-between border border-white/80 shadow-sm">
+          <div className="bg-slate-950/60 backdrop-blur-xl rounded-[2rem] p-4 flex items-center justify-between border border-white/5 shadow-inner">
             <div className="flex flex-col">
-              <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">
+              <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">
                 {status.type === 'class' ? 'ZİLE KALAN' : 'DERSE KALAN'}
               </span>
-              <span className={`text-3xl font-black tabular-nums leading-none tracking-tighter ${status.isAlert ? 'text-red-600' : 'text-slate-800'}`}>
+              <span className={`text-3xl font-black tabular-nums leading-none tracking-tighter ${status.isAlert ? 'text-red-400' : 'text-slate-100'}`}>
                 {timeLeftStr}
               </span>
             </div>
-            <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${status.isAlert ? 'bg-red-100 text-red-600 animate-pulse' : 'bg-brand-light text-brand-primary'}`}>
+            <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${status.isAlert ? 'bg-red-950 text-red-500 animate-pulse' : 'bg-slate-800/80 text-brand-primary border border-white/5'}`}>
               <Timer size={24} className={status.isAlert ? 'animate-spin' : ''} />
             </div>
           </div>
         ) : (
-          <div className="bg-gradient-to-br from-brand-primary to-brand-dark text-white rounded-[2rem] p-5 flex items-center justify-center gap-4 shadow-lg shadow-brand-primary/20">
-             <div className="p-3 bg-white/20 rounded-2xl backdrop-blur-md">
-                <Moon size={24} className="text-yellow-300 fill-yellow-300" />
+          <div className="bg-gradient-to-br from-brand-primary to-brand-dark text-white rounded-[2rem] p-5 flex items-center justify-center gap-4 shadow-2xl shadow-blue-900/20 border border-white/10">
+             <div className="p-3 bg-white/10 rounded-2xl backdrop-blur-md">
+                <Moon size={22} className="text-yellow-300 fill-yellow-300" />
              </div>
              <div className="flex flex-col">
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-80">Bugünlük Bu Kadar</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-70">Mesai Bitti</span>
                 <span className="text-sm font-bold tracking-wide">İyi Dinlenmeler!</span>
              </div>
           </div>

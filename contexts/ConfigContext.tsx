@@ -22,11 +22,6 @@ const defaultLayout: LayoutSettings = {
   imageScale: 100
 };
 
-const defaultBellTimes = [
-  "08:50","09:30", "09:45","10:25", "10:45","11:25", 
-  "11:40","12:20", "13:05","13:45", "14:00","14:40", "14:55","15:35"
-];
-
 const defaultSettings: AppSettings = {
   schoolName: 'Özyayla İlk ve Şehit Hüseyin İpek Ortaokulu',
   mode: 'info',
@@ -34,8 +29,7 @@ const defaultSettings: AppSettings = {
   imageUrl: '',
   academicYear: '2025 - 2026',
   showAnnouncements: true,
-  layout: defaultLayout,
-  bellTimes: defaultBellTimes
+  layout: defaultLayout
 };
 
 const ConfigContext = createContext<ConfigContextType>({

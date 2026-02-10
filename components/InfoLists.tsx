@@ -6,12 +6,12 @@ import { Cake, Calendar, Megaphone, UserCheck, AlertCircle } from 'lucide-react'
 import { useConfig } from '../contexts/ConfigContext';
 
 const ListContainer: React.FC<{ title: string; icon: React.ReactNode; children: React.ReactNode, color?: string }> = ({ title, icon, children, color = "bg-slate-800" }) => (
-  <div className="glass-panel rounded-3xl p-3 h-full flex flex-col">
-    <div className="flex items-center gap-2 mb-1.5 pb-1.5 border-b border-white/5 shrink-0">
+  <div className="glass-panel rounded-3xl p-3.5 h-full flex flex-col">
+    <div className="flex items-center gap-2 mb-2 pb-2 border-b border-white/5 shrink-0">
         {icon}
-        <h3 className="text-xs font-bold uppercase tracking-wider text-slate-200">{title}</h3>
+        <h3 className="text-xs font-bold uppercase tracking-wider text-slate-300">{title}</h3>
     </div>
-    <div className="flex-1 overflow-y-auto pr-1 space-y-1 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
+    <div className="flex-1 overflow-y-auto pr-1 space-y-1.5 scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent">
         {children}
     </div>
   </div>
@@ -47,14 +47,14 @@ export const DutyTeachers: React.FC = () => {
   }, [duties]);
 
   return (
-    <ListContainer title="Nöbetçi Öğretmenler" icon={<UserCheck size={16} className="text-yellow-400" />}>
+    <ListContainer title="Nöbetçi Öğretmenler" icon={<UserCheck size={16} className="text-emerald-400" />}>
       {todayDuty.length === 0 ? (
-          <div className="text-center text-xs text-slate-500 mt-4 italic">Bugün için nöbetçi bilgisi bulunamadı.</div>
+          <div className="text-center text-xs text-slate-600 mt-6 italic">Bugün için nöbetçi bilgisi yok.</div>
       ) : (
           todayDuty.map((item, i) => (
-            <div key={i} className="flex flex-col py-1.5 border-b border-slate-700/30 last:border-0">
+            <div key={i} className="flex flex-col py-2 px-3 bg-slate-900/40 rounded-xl border border-white/5">
                 <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wide mb-0.5">{item.loc}</span>
-                <span className="text-xs font-bold text-yellow-500/90">{item.name}</span>
+                <span className="text-xs font-bold text-emerald-400/90 tracking-tight">{item.name}</span>
             </div>
           ))
       )}
@@ -70,18 +70,18 @@ export const AnnouncementsList: React.FC = () => {
     return (
         <ListContainer title="Duyuru Panosu" icon={<Megaphone size={16} className="text-blue-400" />}>
             {(!show || announcements.length === 0) ? (
-                <div className="text-center text-xs text-slate-500 mt-4 italic">
-                    {show ? "Aktif duyuru bulunmamaktadır." : "Duyurular şu an kapalı."}
+                <div className="text-center text-xs text-slate-600 mt-6 italic">
+                    {show ? "Aktif duyuru bulunmamaktadır." : "Duyurular kapalı."}
                 </div>
             ) : (
-                <div className="space-y-2" key={fontSize}> {/* Force re-render on font size change */}
+                <div className="space-y-2.5" key={fontSize}>
                   {announcements.map((item, i) => (
-                      <div key={item.id || i} className={`flex items-start gap-3 py-2 border-b border-slate-700/30 last:border-0 ${item.important ? 'bg-red-500/5 rounded-lg px-2 -mx-2' : ''}`}>
-                          <div className="shrink-0 flex items-center justify-center" style={{ width: `${fontSize + 4}px`, height: `${fontSize * 1.5}px` }}>
+                      <div key={item.id || i} className={`flex items-start gap-3 p-2.5 rounded-xl border ${item.important ? 'bg-red-500/10 border-red-500/20' : 'bg-slate-900/40 border-white/5'}`}>
+                          <div className="shrink-0 flex items-center justify-center mt-0.5">
                             {item.important ? (
                                <AlertCircle size={Math.max(14, fontSize * 0.9)} className="text-red-500 animate-pulse" />
                             ) : (
-                               <div style={{ width: `${Math.max(4, fontSize * 0.3)}px`, height: `${Math.max(4, fontSize * 0.3)}px` }} className="rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]"></div>
+                               <div style={{ width: '6px', height: '6px' }} className="rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.6)]"></div>
                             )}
                           </div>
                           <span 
@@ -123,16 +123,16 @@ export const Birthdays: React.FC = () => {
   return (
     <ListContainer title="Doğum Günleri" icon={<Cake size={16} className="text-pink-400" />}>
       {list.length === 0 ? (
-         <div className="text-center text-xs text-slate-500 mt-4">Bugün doğum günü yok</div>
+         <div className="text-center text-xs text-slate-600 mt-6 italic">Bugün doğum günü yok.</div>
       ) : (
         <>
-        <div className="bg-gradient-to-r from-pink-500/20 to-transparent p-1.5 rounded-lg mb-1.5 flex items-center gap-2 border border-pink-500/10">
-            <span className="text-[9px] text-pink-200 font-bold uppercase tracking-wide">🎂 İyi ki doğdunuz!</span>
+        <div className="bg-pink-500/10 p-2 rounded-xl mb-2 flex items-center gap-2 border border-pink-500/20">
+            <span className="text-[10px] text-pink-300 font-bold uppercase tracking-wide">🎂 İyi ki doğdunuz!</span>
         </div>
         {list.map((item, i) => (
-            <div key={i} className="flex justify-between items-center bg-slate-800/40 p-1.5 rounded-lg border border-slate-700/50 mb-1">
-                <span className="text-[11px] font-bold text-slate-200">{item['AD SOYAD']}</span>
-                <span className="text-[9px] font-bold text-slate-400 bg-slate-900/80 px-1.5 py-0.5 rounded-md">{item.SINIF}</span>
+            <div key={i} className="flex justify-between items-center bg-slate-900/50 p-2.5 rounded-xl border border-white/5 mb-1.5">
+                <span className="text-[11px] font-bold text-slate-100">{item['AD SOYAD']}</span>
+                <span className="text-[9px] font-black text-slate-400 bg-black/40 px-2 py-0.5 rounded-md border border-white/5 uppercase tracking-tighter">{item.SINIF}</span>
             </div>
         ))}
         </>
@@ -178,21 +178,21 @@ export const SpecialEvents: React.FC = () => {
     }, []);
   
     return (
-      <ListContainer title="Özel Günler" icon={<Calendar size={16} className="text-green-400" />}>
+      <ListContainer title="Özel Günler" icon={<Calendar size={16} className="text-amber-400" />}>
         {list.length === 0 ? (
-           <div className="text-center text-xs text-slate-500 mt-2 italic px-2">Yakın tarihte (±3 gün) özel gün bulunmamaktadır.</div>
+           <div className="text-center text-xs text-slate-600 mt-6 italic px-2">Yakın tarihte özel gün yok.</div>
         ) : (
           list.map((item, i) => (
-              <div key={i} className={`flex flex-col p-1.5 rounded-lg border mb-1 last:mb-0 transition-colors ${item.isToday ? 'bg-green-500/20 border-green-500/40 shadow-[0_0_10px_rgba(34,197,94,0.1)]' : 'bg-slate-800/30 border-slate-700/30 hover:bg-slate-700/40'}`}>
+              <div key={i} className={`flex flex-col p-2.5 rounded-xl border mb-1.5 last:mb-0 transition-all ${item.isToday ? 'bg-amber-500/10 border-amber-500/30 shadow-inner' : 'bg-slate-900/40 border-white/5'}`}>
                   <div className="flex items-center justify-between gap-2">
-                    <span className={`text-[10px] font-bold ${item.isToday ? 'text-green-300' : 'text-slate-200'}`}>
+                    <span className={`text-[10px] font-bold tracking-tight ${item.isToday ? 'text-amber-400' : 'text-slate-200'}`}>
                         {item['ÖZEL GÜN ADI']}
                     </span>
                     {item.isToday && (
-                        <span className="text-[7px] font-black bg-green-500 text-white px-1 py-0.5 rounded uppercase tracking-tighter shrink-0">BUGÜN</span>
+                        <span className="text-[7px] font-black bg-amber-500 text-slate-900 px-1.5 py-0.5 rounded uppercase tracking-tighter shrink-0 shadow-[0_0_10px_rgba(245,158,11,0.3)]">BUGÜN</span>
                     )}
                   </div>
-                  <span className={`text-[9px] mt-0.5 font-medium ${item.isToday ? 'text-green-400/80' : 'text-slate-500'}`}>{item.TARİH}</span>
+                  <span className={`text-[9px] mt-0.5 font-medium ${item.isToday ? 'text-amber-500/60' : 'text-slate-500'}`}>{item.TARİH}</span>
               </div>
           ))
         )}

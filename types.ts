@@ -66,7 +66,6 @@ export interface LessonStatus {
   dersNo?: number;
   isAlert: boolean;
   nextBellTime: Date | null;
-  progress?: number;
 }
 
 export interface LayoutSettings {
@@ -88,5 +87,4 @@ export interface AppSettings {
   academicYear: string;
   showAnnouncements: boolean;
   layout?: LayoutSettings;
-  bellTimes?: string[];
 }
